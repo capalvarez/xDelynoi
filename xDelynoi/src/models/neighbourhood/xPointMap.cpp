@@ -35,3 +35,13 @@ std::vector<int> xPointMap::getAllNeighbours(std::vector<Point> points, int poly
 
     return neighbours.getList();
 }
+
+void xPointMap::replaceNeighbour(Point p, int oldNeighbour, int newNeighbour) {
+    auto got = this->map.find(p);
+
+    if(got == this->map.end()){
+        this->insert(p, newNeighbour);
+    }else{
+        changeNeighbour(p,oldNeighbour, newNeighbour);
+    }
+}

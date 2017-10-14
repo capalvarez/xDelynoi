@@ -1,1 +1,0 @@
-#include "../../../../include/xDelynoi/operations/break/closingrules/ClosestVertexClosigRule.h"

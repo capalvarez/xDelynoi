@@ -5,7 +5,7 @@
 #include <xDelynoi/models/xMesh.h>
 #include <delynoi/models/Region.h>
 #include <delynoi/voronoi/TriangleDelaunayGenerator.h>
-#include <xDelynoi/operations/refine/RefineAdapter.h>
+#include <xDelynoi/operations/adapter/AddElementsAdapter.h>
 
 class MeshRefiner{
 protected:
@@ -16,8 +16,7 @@ public:
 
     void refine(xPolygon* elem, std::vector<Point> pointsToAdd);
 
-    virtual std::unordered_map<int,int> addPoints(UniqueList<Point>& points, std::vector<Point> pointsToAdd);
-    virtual SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd, std::unordered_map<int, int>& pointMap)=0;
+    virtual SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd)=0;
 };
 
 #endif

@@ -19,6 +19,10 @@ void xSegmentMap::changeNeighbour(NeighboursBySegment n, int oldN, int newN) {
     }
 }
 
+bool xSegmentMap::isNeighbour(NeighboursBySegment n, int poly) {
+    return n.getFirst()==poly || n.getSecond()==poly;
+}
+
 int xSegmentMap::getOther(NeighboursBySegment n, int other) {
     if(n.getFirst()==other){
         return n.getSecond();
@@ -46,7 +50,7 @@ void xSegmentMap::changeNeighbour(IndexSegment s, int oldNeighbour, int newNeigh
 bool xSegmentMap::isNeighbour(IndexSegment s, int poly) {
     NeighboursBySegment n = this->get(s);
 
-    return n.getFirst()==poly || n.getSecond()==poly;
+    return isNeighbour(n,poly);
 }
 
 bool xSegmentMap::isInBorder(IndexSegment s) {
@@ -55,10 +59,10 @@ bool xSegmentMap::isInBorder(IndexSegment s) {
     return n.getFirst()<0 || n.getSecond()<0;
 }
 
-void xSegmentMap::replace_or_delete(IndexSegment s, int oldNeighbour_current, int oldNeighbour_old, int newNeighbour,
-                                    std::unordered_map<NeighboursBySegment, int, NeighboursHasher> map,
-                                    std::unordered_map<IndexSegment, int, SegmentHasher> &erased,
-                                    std::unordered_map<int, int> newEquivalence) {
+void xSegmentMap::replaceOrDelete(IndexSegment s, int oldNeighbour_current, int oldNeighbour_old, int newNeighbour,
+                                  std::unordered_map<NeighboursBySegment, int, NeighboursHasher> map,
+                                  std::unordered_map<IndexSegment, int, SegmentHasher> &erased,
+                                  std::unordered_map<int, int> newEquivalence) {
     auto is_there = erased.find(s);
     if(is_there != erased.end()) {
         return;
@@ -114,4 +118,19 @@ std::vector<int> xSegmentMap::getAllNeighbours(std::vector<IndexSegment> segment
     }
 
     return neighbours.getList();
+}
+
+int xSegmentMap::getOther(IndexSegment n, int other) {
+    return getOther(this->get(n), other);
+}
+
+void xSegmentMap::insert_if_null(IndexSegment s, int index) {
+    std::unordered_map<IndexSegment,NeighboursBySegment,SegmentHasher>::iterator got = this->map.find(s);
+
+    if(got != this->map.end()){
+        NeighboursBySegment& n = got->second;
+        if(isNeighbour(n,-1)){
+            changeNeighbour(n, -1, index);
+        }
+    }
 }

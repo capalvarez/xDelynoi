@@ -1,8 +1,7 @@
-#include <xDelynoi/operations/refine/RefineAdapter.h>
+#include <xDelynoi/operations/adapter/AddElementsAdapter.h>
 #include <xDelynoi/models/basic/xIndexSegment.h>
 
-template <class T>
-std::unordered_map<int, int> RefineAdapter<T>::includeNewPoints(UniqueList<Point> &meshPoints, std::vector<Point> points) {
+std::unordered_map<int, int> AddElementsAdapter::includeNewPoints(UniqueList<Point> &meshPoints, std::vector<Point> points) {
     std::unordered_map<int,int> pointMap;
 
     for (int j = 0; j < points.size() ; ++j) {
@@ -13,8 +12,7 @@ std::unordered_map<int, int> RefineAdapter<T>::includeNewPoints(UniqueList<Point
     return pointMap;
 }
 
-template <class T>
-void RefineAdapter<T>::includeNewElements(xMesh *mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex,
+void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex,
                                           ElementConstructor *constructor) {
     std::unordered_map<int,std::unordered_map<IndexSegment,std::vector<IndexSegment>,SegmentHasher>> changesInNeighbours;
 
@@ -22,7 +20,7 @@ void RefineAdapter<T>::includeNewElements(xMesh *mesh, SimpleMesh toInclude, std
     std::vector<xPolygon*>& meshElements = mesh->getPolygons();
     SegmentMap& segments = mesh->getSegments();
 
-    std::vector<T> elements = toInclude.getElements();
+    std::vector<xPolygon*> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
 
     std::vector<IndexSegment> containerSegments;
@@ -38,7 +36,7 @@ void RefineAdapter<T>::includeNewElements(xMesh *mesh, SimpleMesh toInclude, std
     }
 
     for (int i = 0; i < elements.size() ; ++i) {
-        std::vector<int> oldPoints = elements[i].getPoints();
+        std::vector<int> oldPoints = elements[i]->getPoints();
         int n = oldPoints.size();
 
         std::vector<int> newPolygonPoints;

@@ -202,3 +202,43 @@ void xPolygon::replaceSegment(IndexSegment seg, std::vector<IndexSegment> segs, 
         this->points.insert(this->points.begin()+indexOfStart+1, orderedSegments.begin()+1, orderedSegments.end()-1);
     }
 }
+
+int xPolygon::numberOfInteresectedSegments(PointSegment direction, std::vector<Point> points) {
+    int count = 0;
+    std::vector<IndexSegment> segments;
+    this->getSegments(segments);
+
+    for(IndexSegment s: segments){
+        Point p;
+        if(direction.intersectionInfinite(points[s.getFirst()], points[s.getSecond()], p)){
+            count++;
+        }
+    }
+
+    return count;
+}
+
+void xPolygon::insertOnSegment(IndexSegment segment, int point) {
+    std::vector<int> points = {point};
+
+    insertOnSegment(segment, points);
+}
+
+void xPolygon::insertOnSegment(IndexSegment segment, std::vector<int> point) {
+    int n = this->numberOfSides();
+
+    int i = utilities::indexOf(this->points, segment.getFirst());
+    int j = utilities::indexOf(this->points, segment.getSecond());
+
+    if(i!=-1 && j!=-1 && (std::abs(i-j)==1 || std::abs(i-j)==(n-1))){
+        int start = std::min(i,j);
+        int end = std::max(i,j);
+
+        if(start==0 && end==n-1){
+            this->points.insert(this->points.end(), point.begin(), point.end());
+        }else{
+            this->points.insert(this->points.begin()+start+1, point.begin(), point.end());
+        }
+
+    }
+}

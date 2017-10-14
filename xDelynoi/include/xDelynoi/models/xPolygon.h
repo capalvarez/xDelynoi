@@ -17,6 +17,10 @@ public:
     void replaceVertex(int oldVertex, int newVertex, xSegmentMap& edges);
 
     void replaceSegment(IndexSegment seg, std::vector<IndexSegment> segs, std::vector<Point> points);
+    int numberOfInteresectedSegments(PointSegment direction, std::vector<Point> points);
+
+    void insertOnSegment(IndexSegment segment, int point);
+    void insertOnSegment(IndexSegment segment, std::vector<int> point);
 };
 
 #endif

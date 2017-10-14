@@ -101,7 +101,7 @@ void xMesh<T>::replaceElementsForMerged(std::vector<int> merged, std::vector<int
         poly2->getSegments(poly2Segments);
 
         for(IndexSegment s: poly2Segments){
-            edges.replace_or_delete(s, this->polygons.size() - 1, i2, polys.back(), map, toIgnore, swappedIndexes);
+            edges.replaceOrDelete(s, this->polygons.size() - 1, i2, polys.back(), map, toIgnore, swappedIndexes);
         }
 
         this->polygons.pop_back();
@@ -295,8 +295,12 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
             std::vector<int> neighbours = neighbourInfo.getNeighbours();
             neighbours.erase(std::remove(neighbours.begin(), neighbours.end(), poly_index));
 
-            //TODO:Terminar aqui
+            int neighbour = getNeighbourFromCommonVertexSet(direction, neighbours, vertexIndex);
 
+            NeighbourInfo n(neighbour, polySeg[j], p, false);
+            n.isVertex = true;
+
+            return n;
         }
 
         if(!polySeg[j].isContained(direction, this->points.getList())){
@@ -319,6 +323,23 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
     return NeighbourInfo(-1,IndexSegment(),Point(), false);
 }
 
+int xMesh::getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<int> vertexSet, int vertexIndex) {
+    int correctNeighbour = 0;
+    for(int p: vertexSet){
+        xPolygon* candidate = this->getPolygon(p);
+
+        if(!candidate->isVertex(vertexIndex)){
+            continue;
+        }
+
+        if(candidate->numberOfInteresectedSegments(direction, this->points.getList())==2){
+            correctNeighbour = p;
+        }
+    }
+
+    return correctNeighbour;
+}
+
 template <typename T>
 void xMesh<T>::refine(Point p) {
 
@@ -337,6 +358,7 @@ xPolygon* xMesh<T>::getPolygon(int index) {
 template <typename T>
 ContainerInfo xMesh<T>::processContainerInfo(int poly, Point point) {
     xPolygon* polygon = getPolygon(poly);
+    bool inBoundary = false;
 
     IndexSegment container_edge = polygon->containerEdge(this->points.getList(), point);
 
@@ -351,6 +373,10 @@ ContainerInfo xMesh<T>::processContainerInfo(int poly, Point point) {
             }
         }
 
+        if(isInBorder(container_edge)){
+            inBoundary = true;
+        }
+
         if(vertexIndex!=-1){
             NeighboursByPoint n = pointMap.get(point);
 
@@ -362,7 +388,10 @@ ContainerInfo xMesh<T>::processContainerInfo(int poly, Point point) {
         }
     }
 
-    return ContainerInfo(point, poly);
+    ContainerInfo info(point, poly);
+    info.setAsBoundary(inBoundary);
+
+    return info;
 }
 
 template <typename T>
@@ -378,6 +407,16 @@ std::vector<int> xMesh<T>::getNeighboursBySegment(int poly_index) {
     this->getPolygon(poly_index)->getSegments(segments);
 
     return this->edges.getAllNeighbours(segments, poly_index);
+}
+
+template <typename T>
+bool xMesh<T>::isInBorder(IndexSegment container) {
+    return edges.get(container).getFirst()==-1 || edges.get(container).getSecond()==-1;
+}
+
+template <typename T>
+bool xMesh<T>::isEndPoint(IndexSegment segment, Point p) {
+    return p == points[segment.getFirst()] || p == points[segment.getSecond()];
 }
 
 template class xMesh<Polygon>;

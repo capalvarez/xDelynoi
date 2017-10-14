@@ -5,7 +5,7 @@ PolyPartitionWrapper::PolyPartitionWrapper(xMesh *mesh, ElementConstructor *cons
     this->constructor = constructor;
 }
 
-std::vector<xPolygon *> PolyPartitionWrapper::partition(xPolygon *elem) {
+SimpleMesh PolyPartitionWrapper::partition(xPolygon *elem) {
     TPPLPartition partition;
     std::list<TPPLPoly> result;
 
@@ -23,10 +23,19 @@ std::vector<xPolygon *> PolyPartitionWrapper::partition(xPolygon *elem) {
     partition.ConvexPartition_HM(&poly, &result);
 
     UniqueList<Point> partitionPoints;
+    std::vector<xPolygon*> partitionPolygons;
 
     for (auto iter = result.begin(); iter != result.end(); ++iter) {
+        std::vector<int> polyPoints;
+
         for (int j = 0; j < iter->GetNumPoints(); ++j) {
-            int index = partitionPoints.push_back();
+            int index = partitionPoints.push_back(Point(iter->GetPoint(j).x, iter->GetPoint(j).y));
+
+            polyPoints.push_back(index);
         }
+
+        partitionPolygons.push_back(constructor->createNewElement(polyPoints, partitionPoints));
     }
+
+    return SimpleMesh(partitionPolygons, partitionPoints);
 }

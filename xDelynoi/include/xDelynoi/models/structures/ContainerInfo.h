@@ -3,39 +3,45 @@
 
 #include <xDelynoi/models/xPolygon.h>
 
-struct ContainerInfo{
+struct ContainerInfo {
     Point point;
     std::vector<int> containers;
     bool insidePolygon = false;
     bool inVertex = false;
     bool inEdge = false;
+    bool isInBoundary = false;
 
-    ContainerInfo(){}
+    ContainerInfo() {}
 
-    ContainerInfo(Point p, int container){
+    ContainerInfo(Point p, int container) {
         point = p;
         containers.push_back(container);
         insidePolygon = true;
     }
 
-    ContainerInfo(Point p, int container1, int container2){
+    ContainerInfo(Point p, int container1, int container2) {
         point = p;
-        if(container1!=-1){
+        if (container1 != -1) {
             containers.push_back(container1);
         }
 
-        if(container2!=-1){
+        if (container2 != -1) {
             containers.push_back(container2);
         }
 
         inEdge = true;
     }
 
-    ContainerInfo(Point p, std::vector<int> c){
+    ContainerInfo(Point p, std::vector<int> c) {
         point = p;
         containers.assign(c.begin(), c.end());
         inVertex = true;
     }
+
+    void setAsBoundary(bool set){
+        isInBoundary = set;
+    }
+
 };
 
 #endif

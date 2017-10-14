@@ -16,5 +16,5 @@ std::vector<T> SimpleMesh::getElements() {
 
 template <class T>
 std::vector<Point> SimpleMesh::getPoints() {
-    return this->points;
+    return this->points.getList();
 }

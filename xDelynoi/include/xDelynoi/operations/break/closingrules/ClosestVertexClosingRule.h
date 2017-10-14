@@ -3,8 +3,9 @@
 
 #include <xDelynoi/operations/break/closingrules/ClosingRule.h>
 
-class ClosestVertexClosigRule : public ClosingRule{
-
+class ClosestVertexClosingRule : public ClosingRule{
+public:
+    void closePolygon(xMesh* mesh, Point p, int polygon);
 };
 
 #endif

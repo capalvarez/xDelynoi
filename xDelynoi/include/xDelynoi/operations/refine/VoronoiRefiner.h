@@ -7,9 +7,7 @@
 class VoronoiRefiner : public MeshRefiner{
 public:
     VoronoiRefiner(xMesh* mesh, ElementConstructor* constructor);
-    SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd, std::unordered_map<int, int>& pointMap);
-
-    std::unordered_map<int,int> addPoints(UniqueList<Point>& points, std::vector<Point> pointsToAdd);
+    SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd);
 };
 
 #endif

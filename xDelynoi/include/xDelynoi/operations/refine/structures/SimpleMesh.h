@@ -4,17 +4,17 @@
 #include <vector>
 #include <delynoi/models/basic/Point.h>
 #include <utilities/UniqueList.h>
+#include <xDelynoi/models/xPolygon.h>
 
-template <class T>
 class SimpleMesh{
 private:
-    std::vector<T> elements;
+    std::vector<xPolygon*> elements;
     UniqueList<Point> points;
 public:
     SimpleMesh();
-    SimpleMesh(std::vector<T> elems, UniqueList<Point> points);
+    SimpleMesh(std::vector<xPolygon*> elems, UniqueList<Point> points);
 
-    std::vector<T> getElements();
+    std::vector<xPolygon*> getElements();
     std::vector<Point> getPoints();
 };
 

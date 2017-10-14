@@ -3,7 +3,7 @@
 
 TriangulateRefiner::TriangulateRefiner(xMesh *mesh, ElementConstructor* constructor) : MeshRefiner(mesh, constructor){}
 
-SimpleMesh TriangulateRefiner::computeElements(xPolygon *elem, std::vector<Point> toAdd, std::unordered_map<int, int>& pointMap) {
+SimpleMesh TriangulateRefiner::computeElements(xPolygon *elem, std::vector<Point> toAdd) {
     UniqueList<Point>& points = this->mesh->getPoints();
 
     Region r (*elem, points.getList());

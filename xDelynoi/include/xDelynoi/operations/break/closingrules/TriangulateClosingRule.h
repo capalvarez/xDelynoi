@@ -4,7 +4,8 @@
 #include <xDelynoi/operations/break/closingrules/ClosingRule.h>
 
 class TriangulateClosingRule : public ClosingRule {
-
+public:
+    void closePolygon(xMesh* mesh, Point p, int polygon);
 };
 
 #endif

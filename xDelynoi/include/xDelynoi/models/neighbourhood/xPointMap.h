@@ -10,6 +10,7 @@ public:
     void changeNeighbour(Point p, int oldNeighbour, int newNeighbour);
     void deleteElement(Point p);
     std::vector<int> getAllNeighbours(std::vector<Point> points, int poly_index);
+    void replaceNeighbour(Point p, int oldNeighbour, int newNeighbour);
 };
 
 #endif

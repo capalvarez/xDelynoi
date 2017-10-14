@@ -6,7 +6,6 @@
 #include <xDelynoi/models/structures/NeighbourInfo.h>
 #include <xDelynoi/models/xPolygon.h>
 #include <xDelynoi/models/xTriangle.h>
-#include <xDelynoi/operations/break/closingrules/ClosingRule.h>
 #include <xDelynoi/models/neighbourhood/xSegmentMap.h>
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
 #include <xDelynoi/operations/MeshMerger.h>
@@ -15,6 +14,8 @@
 #include <xDelynoi/models/constructor/xPolygonConstructor.h>
 #include <xDelynoi/models/constructor/xTriangleConstructor.h>
 #include <xDelynoi/operations/MeshRefiner.h>
+#include <xDelynoi/operations/MeshFixer.h>
+#include <xDelynoi/operations/MeshBreaker.h>
 
 template <typename T>
 class xMesh : public Mesh<T>{
@@ -25,9 +26,9 @@ private:
 
     MeshMerger* merger;
     MeshRefiner* refiner;
+    MeshBreaker* breaker;
+    MeshFixer* fixer;
     ElementConstructor* constructor;
-    ClosingRule* breakClosingRule;
-
 
     ContainerInfo processContainerInfo(int poly, Point point);
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
@@ -56,6 +57,7 @@ public:
 
     NeighbourInfo getNeighbour(int poly_index, PointSegment direction);
     NeighbourInfo getNeighbour(int poly_index, PointSegment direction, std::vector<int> &previous);
+    int getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<int> vertexSet, int vertexIndex);
 
     void refine(Point p);
     void refine(std::vector<Point> p);
@@ -64,6 +66,9 @@ public:
     std::vector<int> getNeighboursBySegment(int poly_index);
 
     xPolygon* getPolygon(int index);
+    bool isInBorder(IndexSegment container);
+
+    bool isEndPoint(IndexSegment segment, Point point);
 };
 
 #endif
