@@ -10,9 +10,7 @@ void TriangulateClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Nei
 
     xPointMap& pointMap = mesh->getPointMap();
     xSegmentMap& segmentMap = mesh->getSegments();
-    xPolygon* poly = mesh->getPolygon(polygon);
-
-    ElementConstructor* constructor = new xTriangleConstructor();
+    xPolygon poly = mesh->getPolygon(polygon);
 
     int pIndex = points.push_back(p);
     int p1Index = points.push_back(info.intersection);
@@ -23,14 +21,12 @@ void TriangulateClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Nei
         restricted.push_back(IndexSegment(p1Index, p1Index));
     }
 
-    Region r (*poly, points.getList());
+    Region r (poly, points.getList());
     TriangleDelaunayGenerator generator(r, std::vector<Point>());
     Mesh<Triangle> triangulation = generator.getConstrainedDelaunayTriangulation(restricted);
 
     SimpleMesh meshToInclude(triangulation.getPolygons(), triangulation.getPoints());
 
     std::unordered_map<int,int> triangulationMap = AddElementsAdapter::includeNewPoints(points, mesh->getPoints().getList());
-    AddElementsAdapter::includeNewElements(mesh, meshToInclude, triangulationMap, polygon, constructor);
-
-    delete constructor;
+    AddElementsAdapter::includeNewElements(mesh, meshToInclude, triangulationMap, polygon);
 }

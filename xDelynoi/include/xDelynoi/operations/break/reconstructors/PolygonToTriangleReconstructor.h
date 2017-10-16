@@ -8,8 +8,7 @@
 
 class PolygonToTriangleReconstructor: public ElementReconstructor {
 public:
-    PolygonToTriangleReconstructor(ElementConstructor* constructor);
-    std::vector<xPolygon*> reconstructElement(std::vector<int> points, UniqueList<Point> meshPoints);
+    std::vector<xPolygon> reconstructElement(std::vector<int> points, UniqueList<Point> meshPoints);
 };
 
 #endif

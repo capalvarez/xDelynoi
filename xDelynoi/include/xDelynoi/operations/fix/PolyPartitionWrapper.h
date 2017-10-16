@@ -13,7 +13,7 @@ private:
 public:
     PolyPartitionWrapper(xMesh* mesh);
 
-    SimpleMesh partition(xPolygon* elem);
+    SimpleMesh partition(xPolygon elem);
 };
 
 #endif

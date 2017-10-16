@@ -7,15 +7,14 @@
 class ConvexFixer: public MeshFixer {
 private:
     Partitioner* partitioner;
-    ElementConstructor* constructor;
     xMesh* mesh;
 
-    void fixNonConvex(xPolygon* elem);
+    void fixNonConvex(xPolygon elem);
 public:
-    ConvexFixer(xMesh *mesh, ElementConstructor* constructor);
+    ConvexFixer(xMesh *mesh);
     ~ConvexFixer();
     void fixMesh();
-    void fixElement(xPolygon *elem);
+    void fixElement(xPolygon elem);
 };
 
 #endif

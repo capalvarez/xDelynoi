@@ -1,11 +1,11 @@
 #include <xDelynoi/operations/refine/TriangulateRefiner.h>
 
-TriangulateRefiner::TriangulateRefiner(xMesh *mesh, ElementConstructor* constructor) : MeshRefiner(mesh, constructor){}
+TriangulateRefiner::TriangulateRefiner(xMesh *mesh) : MeshRefiner(mesh){}
 
-SimpleMesh TriangulateRefiner::computeElements(xPolygon *elem, std::vector<Point> toAdd) {
+SimpleMesh TriangulateRefiner::computeElements(xPolygon elem, std::vector<Point> toAdd) {
     UniqueList<Point>& points = this->mesh->getPoints();
 
-    Region r (*elem, points.getList());
+    Region r (elem, points.getList());
     TriangleDelaunayGenerator generator(r, toAdd);
     Mesh<Triangle> triangulation = generator.getConstrainedDelaunayTriangulation();
 

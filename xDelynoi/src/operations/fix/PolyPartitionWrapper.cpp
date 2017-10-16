@@ -4,17 +4,17 @@ PolyPartitionWrapper::PolyPartitionWrapper(xMesh *mesh) {
     this->mesh = mesh;
 }
 
-SimpleMesh PolyPartitionWrapper::partition(xPolygon *elem) {
+SimpleMesh PolyPartitionWrapper::partition(xPolygon elem) {
     TPPLPartition partition;
     std::list<TPPLPoly> result;
 
     TPPLPoly poly;
 
-    std::vector<Point> points = elem->getPoints(mesh->getPoints().getList());
+    std::vector<Point> points = elem.getPoints(mesh->getPoints().getList());
 
-    poly.Init(elem->numberOfSides());
+    poly.Init(elem.numberOfSides());
 
-    for (int i = 0; i < elem->numberOfSides(); ++i) {
+    for (int i = 0; i < elem.numberOfSides(); ++i) {
         poly[i].x = points[i].getX();
         poly[i].y = points[i].getY();
     }

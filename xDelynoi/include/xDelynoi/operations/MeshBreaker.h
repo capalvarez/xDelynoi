@@ -16,14 +16,14 @@ private:
     ElementReconstructor* constructor;
 
     void breakMesh(PointSegment segment, ClosingRule* closingRule);
-    std::vector<int> computeNewPolygons(NeighbourInfo n1, NeighbourInfo &n2, xPolygon *poly1, std::vector<int> &new1,
+    std::vector<int> computeNewPolygons(NeighbourInfo n1, NeighbourInfo &n2, xPolygon poly1, std::vector<int> &new1,
                                         std::vector<int> &new2, int p1, int p2);
 public:
     MeshBreaker(xMesh* mesh, ClosingRule* close);
     void breakMesh(PointSegment segment);
     void breakMesh(std::vector<PointSegment> segments);
     void breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init);
-    void breakFromGivenSegment(NeighbourInfo n1, NeighbourInfo& n2, xPolygon* poly1, std::vector<int>& new1,
+    void breakFromGivenSegment(NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
                                std::vector<int>& new2, int p1, int p2, int init);
 };
 

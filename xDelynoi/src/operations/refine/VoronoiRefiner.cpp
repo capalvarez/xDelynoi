@@ -1,11 +1,11 @@
 #include <xDelynoi/operations/refine/VoronoiRefiner.h>
 
-VoronoiRefiner::VoronoiRefiner(xMesh *mesh, ElementConstructor *constructor) : MeshRefiner(mesh, constructor) {}
+VoronoiRefiner::VoronoiRefiner(xMesh *mesh) : MeshRefiner(mesh) {}
 
-SimpleMesh VoronoiRefiner::computeElements(xPolygon *elem, std::vector<Point> toAdd) {
+SimpleMesh VoronoiRefiner::computeElements(xPolygon elem, std::vector<Point> toAdd) {
     UniqueList<Point>& points = this->mesh->getPoints();
 
-    Region region(*elem, points.getList());
+    Region region(elem, points.getList());
     TriangleVoronoiGenerator voronoiGenerator(toAdd, region);
     Mesh<Polygon> voronoi = voronoiGenerator.getMesh();
 

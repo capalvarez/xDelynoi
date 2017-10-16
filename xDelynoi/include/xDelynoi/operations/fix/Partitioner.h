@@ -5,7 +5,7 @@
 
 class Partitioner{
 public:
-    virtual SimpleMesh partition(xPolygon* elem)=0;
+    virtual SimpleMesh partition(xPolygon elem)=0;
 };
 
 #endif

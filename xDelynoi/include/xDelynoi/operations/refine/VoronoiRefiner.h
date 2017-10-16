@@ -6,8 +6,8 @@
 
 class VoronoiRefiner : public MeshRefiner{
 public:
-    VoronoiRefiner(xMesh* mesh, ElementConstructor* constructor);
-    SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd);
+    VoronoiRefiner(xMesh* mesh);
+    SimpleMesh computeElements(xPolygon elem, std::vector<Point> toAdd);
 };
 
 #endif

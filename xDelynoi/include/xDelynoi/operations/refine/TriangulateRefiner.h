@@ -7,8 +7,8 @@
 
 class TriangulateRefiner : public MeshRefiner {
 public:
-    TriangulateRefiner(xMesh* mesh, ElementConstructor* constructor);
-    SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd);
+    TriangulateRefiner(xMesh* mesh);
+    SimpleMesh computeElements(xPolygon elem, std::vector<Point> toAdd);
 };
 
 #endif

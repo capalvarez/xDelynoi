@@ -13,12 +13,11 @@ class xMesh;
 class MeshRefiner{
 protected:
     xMesh* mesh;
-    ElementConstructor* constructor;
 public:
-    MeshRefiner(xMesh* mesh, ElementConstructor* constructor);
+    MeshRefiner(xMesh* mesh);
 
-    void refine(xPolygon* elem, std::vector<Point> pointsToAdd);
-    virtual SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd)=0;
+    void refine(xPolygon elem, std::vector<Point> pointsToAdd);
+    virtual SimpleMesh computeElements(xPolygon elem, std::vector<Point> toAdd)=0;
 };
 
 #endif

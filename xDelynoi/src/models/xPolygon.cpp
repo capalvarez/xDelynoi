@@ -9,6 +9,8 @@ xPolygon::xPolygon(Polygon polygon) {
     this->centroid = polygon.getCentroid();
 }
 
+xPolygon::xPolygon(std::vector<int> points, UniqueList<Point> meshPoints) : Polygon(points, meshPoints.getList()){}
+
 bool xPolygon::isVertex(Point p, std::vector<Point> points, int &vertexIndex) {
     for (int i: this->points){
         if(points[i]==p){

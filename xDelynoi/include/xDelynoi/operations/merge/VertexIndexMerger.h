@@ -9,12 +9,12 @@
 class VertexIndexMerger: public MeshMerger {
 private:
     xMesh* mesh;
-    bool areMergeable(xPolygon* poly1, int poly2);
-    std::vector<int> merge(xPolygon* e1, xPolygon*e2, Pair<int> endPoints, bool special_case);
+    bool areMergeable(xPolygon poly1, int poly2);
+    std::vector<int> merge(xPolygon e1, xPolygon e2, Pair<int> endPoints, bool special_case);
 public:
     VertexIndexMerger(xMesh* mesh);
-    std::vector<int> mergeElements(xPolygon* e1, xPolygon* e2, IndexSegment endPoints);
-    std::vector<int> mergeElements(xPolygon* e1, xPolygon* e2);
+    std::vector<int> mergeElements(xPolygon e1, xPolygon e2, IndexSegment endPoints);
+    std::vector<int> mergeElements(xPolygon e1, xPolygon e2);
     std::vector<int> mergeElements(std::vector<int> elements);
 };
 

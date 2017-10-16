@@ -12,19 +12,18 @@ std::unordered_map<int, int> AddElementsAdapter::includeNewPoints(UniqueList<Poi
     return pointMap;
 }
 
-void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex,
-                                          ElementConstructor *constructor) {
+void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex) {
     std::unordered_map<int,std::unordered_map<IndexSegment,std::vector<IndexSegment>,SegmentHasher>> changesInNeighbours;
 
     UniqueList<Point>& meshPoints = mesh->getPoints();
-    std::vector<xPolygon*>& meshElements = mesh->getPolygons();
+    std::vector<xPolygon>& meshElements = mesh->getPolygons();
     SegmentMap& segments = mesh->getSegments();
 
     std::vector<Polygon> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
 
     std::vector<IndexSegment> containerSegments;
-    mesh->getPolygon(originalIndex)->getSegments(containerSegments);
+    mesh->getPolygon(originalIndex).getSegments(containerSegments);
 
     std::map<Angle,std::vector<IndexSegment>> containerSegmentsMap;
 
@@ -46,7 +45,7 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
             newPolygonPoints.push_back(newPoint);
         }
 
-        xPolygon* newPolygon =  constructor->createNewElement(newPolygonPoints, meshPoints);
+        xPolygon newPolygon(newPolygonPoints, meshPoints);
         int index;
 
         if(i<1){
@@ -98,10 +97,10 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
         if(value.first<0)
             continue;
 
-        xPolygon* poly = meshElements[value.first];
+        xPolygon poly = meshElements[value.first];
 
         for(auto s: value.second){
-            poly->replaceSegment(s.first, s.second, meshPoints.getList());
+            poly.replaceSegment(s.first, s.second, meshPoints.getList());
         }
     }
 }

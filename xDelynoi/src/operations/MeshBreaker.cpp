@@ -15,7 +15,7 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     std::vector<int> previous;
 
     UniqueList<Point>& points = mesh->getPoints();
-    std::vector<xPolygon*> polygons = mesh->getPolygons();
+    std::vector<xPolygon> polygons = mesh->getPolygons();
     xSegmentMap edges = mesh->getSegments();
 
     ContainerInfo initialContainer = mesh->findContainer(segment.getFirst());
@@ -25,8 +25,8 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     }
 
     if(initialContainer.inEdge){
-        xPolygon* p1 = mesh->getPolygon(initialContainer.containers[0]);
-        initialPolygon = p1->numberOfInteresectedSegments(segment, points.getList())>1? initialContainer.containers[1] :
+        xPolygon p1 = mesh->getPolygon(initialContainer.containers[0]);
+        initialPolygon = p1.numberOfInteresectedSegments(segment, points.getList())>1? initialContainer.containers[1] :
                          initialContainer.containers[0];
     }
 
@@ -48,7 +48,7 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
 
     //If the initial point lies in the boundary, still include an extra point in the mesh
     if(initialContainer.isInBoundary){
-        IndexSegment container_edge = mesh->getPolygon(initialContainer.containers[0])->containerEdge(points.getList(),
+        IndexSegment container_edge = mesh->getPolygon(initialContainer.containers[0]).containerEdge(points.getList(),
                                                                                                       segment.getFirst());
 
         if(!mesh->isEndPoint(container_edge, segment.getFirst())){
@@ -63,10 +63,10 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     init = initialPolygon;
 
     while(true){
-        xPolygon* poly1 = mesh->getPolygon(n1.neighbour);
+        xPolygon poly1 = mesh->getPolygon(n1.neighbour);
 
-        if(poly1->containsPoint(points.getList(), segment.getSecond())){
-            if(poly1->inEdges(points.getList(), segment.getSecond())){
+        if(poly1.containsPoint(points.getList(), segment.getSecond())){
+            if(poly1.inEdges(points.getList(), segment.getSecond())){
                 if(!oneLastIteration){
                     oneLastIteration = true;
                 }
@@ -76,7 +76,7 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
             }
         }
 
-        std::vector<int> poly1_points = poly1->getPoints();
+        std::vector<int> poly1_points = poly1.getPoints();
 
         if(!n1.isVertex){
             previous = {init, last};
@@ -118,15 +118,15 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     closingRule->closePolygon(mesh, segment.getSecond(), lastPolygon, n1);
 }
 
-std::vector<int> MeshBreaker::computeNewPolygons(NeighbourInfo n1, NeighbourInfo &n2, xPolygon *poly1,
+std::vector<int> MeshBreaker::computeNewPolygons(NeighbourInfo n1, NeighbourInfo &n2, xPolygon poly1,
                                                  std::vector<int> &new1, std::vector<int> &new2, int p1, int p2) {
     UniqueList<Point> &points = mesh->getPoints();
-    std::vector<xPolygon*>& polygons = mesh->getPolygons();
+    std::vector<xPolygon>& polygons = mesh->getPolygons();
 
-    std::vector<int> poly1_points = poly1->getPoints();
+    std::vector<int> poly1_points = poly1.getPoints();
 
-    n1.orderCCW(points.getList(), poly1->getCentroid());
-    n2.orderCCW(points.getList(), poly1->getCentroid());
+    n1.orderCCW(points.getList(), poly1.getCentroid());
+    n2.orderCCW(points.getList(), poly1.getCentroid());
 
     int indexOfStart, point;
 
@@ -190,8 +190,8 @@ std::vector<int> MeshBreaker::computeNewPolygons(NeighbourInfo n1, NeighbourInfo
         indexOfStart++;
     }
 
-    std::vector<xPolygon *> newPolygons1 = constructor->reconstructElement(new1, points.getList());
-    std::vector<xPolygon *> newPolygons2 = constructor->reconstructElement(new2, points.getList());
+    std::vector<xPolygon> newPolygons1 = constructor->reconstructElement(new1, points.getList());
+    std::vector<xPolygon> newPolygons2 = constructor->reconstructElement(new2, points.getList());
 
     newPolygons1.insert(newPolygons1.end(), newPolygons2.begin(), newPolygons2.end());
 
@@ -210,8 +210,8 @@ std::vector<int> MeshBreaker::computeNewPolygons(NeighbourInfo n1, NeighbourInfo
 void MeshBreaker::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
     UniqueList<Point>& points = mesh->getPoints();
 
-    xPolygon* poly1 = mesh->getPolygon(n1.neighbour);
-    std::vector<int> poly1_points = poly1->getPoints();
+    xPolygon poly1 = mesh->getPolygon(n1.neighbour);
+    std::vector<int> poly1_points = poly1.getPoints();
 
     //Include new points on the mesh
     int p1 = points.push_back(n1.intersection);
@@ -223,7 +223,7 @@ void MeshBreaker::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
 
 }
 
-void MeshBreaker::breakFromGivenSegment(NeighbourInfo n1, NeighbourInfo& n2, xPolygon* poly1, std::vector<int>& new1,
+void MeshBreaker::breakFromGivenSegment(NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
                                         std::vector<int>& new2, int p1, int p2, int init) {
     UniqueList<Point>& points = mesh->getPoints();
     xSegmentMap& edges = mesh->getSegments();
@@ -233,10 +233,10 @@ void MeshBreaker::breakFromGivenSegment(NeighbourInfo n1, NeighbourInfo& n2, xPo
     std::vector<int> newElements = computeNewPolygons(n1, n2, poly1, new1, new2, p1, p2);
 
     if(init>=0){
-        mesh->getPolygon(init)->insertOnSegment(n1.edge, p1);
+        mesh->getPolygon(init).insertOnSegment(n1.edge, p1);
     }
 
-    mesh->getPolygon(n2.neighbour)->insertOnSegment(n2.edge, p2);
+    mesh->getPolygon(n2.neighbour).insertOnSegment(n2.edge, p2);
 
     // Get the edge information for the old polygon and update it
     if(!n1.isVertex){
@@ -251,10 +251,10 @@ void MeshBreaker::breakFromGivenSegment(NeighbourInfo n1, NeighbourInfo& n2, xPo
     pointMap.insert(points[p2], {n2.neighbour, n1.neighbour, n1.neighbour});
 
     for(int newElem: newElements){
-        xPolygon* elem = mesh->getPolygon(newElem);
+        xPolygon elem = mesh->getPolygon(newElem);
         std::vector<IndexSegment> segments;
-        elem->getSegments(segments);
-        std::vector<int> elemPoints = elem->getPoints();
+        elem.getSegments(segments);
+        std::vector<int> elemPoints = elem.getPoints();
 
         for (IndexSegment s: segments) {
             edges.replaceNeighbour(s, n1.neighbour, newElem);

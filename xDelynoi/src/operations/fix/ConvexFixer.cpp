@@ -1,10 +1,9 @@
 #include <xDelynoi/operations/fix/ConvexFixer.h>
 #include <xDelynoi/operations/fix/PolyPartitionWrapper.h>
 
-ConvexFixer::ConvexFixer(xMesh *mesh, ElementConstructor *constructor) {
+ConvexFixer::ConvexFixer(xMesh *mesh) {
     this->partitioner = new PolyPartitionWrapper(mesh);
     this->mesh = mesh;
-    this->constructor = constructor;
 }
 
 ConvexFixer::~ConvexFixer() {
@@ -12,11 +11,11 @@ ConvexFixer::~ConvexFixer() {
 }
 
 void ConvexFixer::fixMesh() {
-    std::vector<xPolygon*> elements = mesh->getPolygons();
+    std::vector<xPolygon> elements = mesh->getPolygons();
     UniqueList<Point>& points = mesh->getPoints();
 
-    for(xPolygon* e : elements){
-        if(e->isConvex(points.getList())){
+    for(xPolygon e : elements){
+        if(e.isConvex(points.getList())){
             continue;
         }
 
@@ -24,20 +23,20 @@ void ConvexFixer::fixMesh() {
     }
 }
 
-void ConvexFixer::fixElement(xPolygon *elem) {
+void ConvexFixer::fixElement(xPolygon elem) {
     UniqueList<Point>& points = mesh->getPoints();
 
-    if(elem->isConvex(points.getList())){
+    if(elem.isConvex(points.getList())){
         fixNonConvex(elem);
     }
 }
 
-void ConvexFixer::fixNonConvex(xPolygon *elem) {
+void ConvexFixer::fixNonConvex(xPolygon elem) {
     int elemIndex = utilities::indexOf(this->mesh->getPolygons(), elem);
     UniqueList<Point> &points = mesh->getPoints();
 
     SimpleMesh simpleMesh = partitioner->partition(elem);
 
     std::unordered_map<int,int> pointMap = AddElementsAdapter::includeNewPoints(points, simpleMesh.getPoints());
-    AddElementsAdapter::includeNewElements(this->mesh, simpleMesh, pointMap, elemIndex, this->constructor);
+    AddElementsAdapter::includeNewElements(this->mesh, simpleMesh, pointMap, elemIndex);
 }

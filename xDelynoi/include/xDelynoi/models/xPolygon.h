@@ -9,6 +9,7 @@ private:
     Pair<int> segmentNotContained(std::vector<IndexSegment> s);
 public:
     xPolygon(Polygon polygon);
+    xPolygon(std::vector<int> points, UniqueList<Point> meshPoints);
     Pair<int> commonEdgesBorderPoints(xPolygon other, std::vector<Point> points, bool& pacman_case);
     bool isVertex(Point p, std::vector<Point> points, int &vertexIndex);
     bool isVertex(Point p, std::vector<Point> points);

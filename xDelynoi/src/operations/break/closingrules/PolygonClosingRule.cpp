@@ -8,10 +8,10 @@ void PolygonClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Neighbo
     }
 
     xSegmentMap segmentMap = mesh->getSegments();
-    xPolygon* poly = mesh->getPolygon(polygon);
+    xPolygon poly = mesh->getPolygon(polygon);
 
     std::vector<IndexSegment> segments;
-    poly->getSegments(segments);
+    poly.getSegments(segments);
 
     IndexSegment intersected;
     Point intersection;
