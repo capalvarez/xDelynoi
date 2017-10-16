@@ -7,7 +7,7 @@ class xMesh;
 
 class ClosingRule{
 public:
-    virtual void closePolygon(xMesh* mesh, Point p, int polygon)=0;
+    virtual void closePolygon(xMesh* mesh, Point p, int polygon, NeighbourInfo info)=0;
 };
 
 #endif

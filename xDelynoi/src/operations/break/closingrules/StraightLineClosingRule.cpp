@@ -1,5 +1,5 @@
 #include <xDelynoi/operations/break/closingrules/StraightLineClosingRule.h>
 
-void StraightLineClosingRule::closePolygon(xMesh *mesh, Point p, int polygon) {
-
+Point StraightLineClosingRule::getClosingPoint(IndexSegment segment, UniqueList<Point> points, Point intersection) {
+    return intersection;
 }

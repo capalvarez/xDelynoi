@@ -3,6 +3,7 @@
 
 #include <xDelynoi/models/xPolygon.h>
 #include <xDelynoi/models/xMesh.h>
+#include <delynoi/voronoi/TriangleDelaunayGenerator.h>
 
 class TriangulateRefiner : public MeshRefiner {
 public:

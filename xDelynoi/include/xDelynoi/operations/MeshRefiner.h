@@ -15,7 +15,6 @@ public:
     MeshRefiner(xMesh* mesh, ElementConstructor* constructor);
 
     void refine(xPolygon* elem, std::vector<Point> pointsToAdd);
-
     virtual SimpleMesh computeElements(xPolygon *elem, std::vector<Point> toAdd)=0;
 };
 

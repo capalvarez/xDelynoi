@@ -26,7 +26,6 @@ void PointMap::insert(Point p, std::vector<int> neighbours) {
     }
 }
 
-
 NeighboursByPoint &PointMap::get(Point p) {
     return this->map[p];
 }

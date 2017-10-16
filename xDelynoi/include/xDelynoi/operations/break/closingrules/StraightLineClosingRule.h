@@ -2,10 +2,11 @@
 #define XDELYNOI_STRAIGHTLINECLOSINGRULE_H
 
 #include <xDelynoi/operations/break/closingrules/ClosingRule.h>
+#include "PolygonClosingRule.h"
 
-class StraightLineClosingRule : public ClosingRule {
-public:
-    void closePolygon(xMesh* mesh, Point p, int polygon);
+class StraightLineClosingRule : public PolygonClosingRule {
+protected:
+    Point getClosingPoint(IndexSegment segment, UniqueList<Point> points, Point intersection);
 };
 
 #endif
