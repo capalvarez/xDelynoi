@@ -4,6 +4,7 @@
 #include <xDelynoi/models/xMesh.h>
 
 class xMesh;
+class MeshBreaker;
 
 class ClosingRule{
 public:

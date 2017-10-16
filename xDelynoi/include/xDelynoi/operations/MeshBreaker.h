@@ -1,11 +1,13 @@
 #ifndef XDELYNOI_MESHBREAKER_H
 #define XDELYNOI_MESHBREAKER_H
 
-
 #include <xDelynoi/models/xMesh.h>
 #include <xDelynoi/operations/break/closingrules/ClosingRule.h>
 #include <xDelynoi/models/xPolygon.h>
 #include <xDelynoi/operations/break/reconstructors/ElementReconstructor.h>
+
+class xMesh;
+class ClosingRule;
 
 class MeshBreaker{
 private:

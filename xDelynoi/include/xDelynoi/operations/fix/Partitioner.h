@@ -3,10 +3,9 @@
 
 #include <xDelynoi/operations/refine/structures/SimpleMesh.h>
 
-template <class T>
 class Partitioner{
 public:
-    virtual SimpleMesh<T> partition(xPolygon* elem)=0;
+    virtual SimpleMesh partition(xPolygon* elem)=0;
 };
 
 #endif

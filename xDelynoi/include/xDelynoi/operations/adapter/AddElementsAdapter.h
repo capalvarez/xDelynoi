@@ -7,6 +7,9 @@
 #include <xDelynoi/models/xMesh.h>
 #include <delynoi/models/basic/Angle.h>
 #include <xDelynoi/operations/refine/structures/SimpleMesh.h>
+#include <xDelynoi/models/xMesh.h>
+
+class xMesh;
 
 class AddElementsAdapter {
 public:

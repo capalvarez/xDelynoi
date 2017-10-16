@@ -2,27 +2,27 @@
 #include <xDelynoi/operations/merge/VertexIndexMerger.h>
 #include <xDelynoi/models/structures/greater.h>
 #include <xDelynoi/utilities/vector_ops.h>
+#include <xDelynoi/operations/refine/TriangulateRefiner.h>
 
-template <>
-xMesh<Triangle>::xMesh(Mesh<Triangle> mesh) {
+xMesh::xMesh(Mesh<Triangle> mesh) {
     for(Triangle e: mesh.getPolygons()){
         xPolygon* newElement = new xTriangle(e);
 
-        this->elements.push_back(newElement);
+        this->polygons.push_back(newElement);
     }
 
     this->pointMap = xPointMap(mesh.getPointMap());
     this->edges = xSegmentMap(mesh.getSegments());
     this->constructor = new xTriangleConstructor();
     this->merger = new VertexIndexMerger(this);
+    this->refiner = new TriangulateRefiner(this, this->constructor);
 }
 
-template <>
-xMesh<Polygon>::xMesh(Mesh<Polygon> mesh) {
+xMesh::xMesh(Mesh<Polygon> mesh) {
     for(Polygon e: mesh.getPolygons()){
         xPolygon* newElement = new xPolygon(e);
 
-        this->elements.push_back(newElement);
+        this->polygons.push_back(newElement);
     }
 
     this->pointMap = xPointMap(mesh.getPointMap());
@@ -31,8 +31,23 @@ xMesh<Polygon>::xMesh(Mesh<Polygon> mesh) {
     this->merger = new VertexIndexMerger(this);
 }
 
-template <typename T>
-void xMesh<T>::swapElements(int first, int last, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore) {
+xSegmentMap &xMesh::getSegments() {
+    return this->edges;
+}
+
+xSegmentMap xMesh::getSegments() const {
+    return this->edges;
+}
+
+xPointMap &xMesh::getPointMap() {
+    return this->pointMap;
+}
+
+xPointMap xMesh::getPointMap() const {
+    return this->pointMap;
+}
+
+void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore) {
     xPolygon* p1 = getPolygon(first);
     xPolygon* p2 = getPolygon(last);
 
@@ -71,12 +86,11 @@ void xMesh<T>::swapElements(int first, int last, std::unordered_map<IndexSegment
     this->polygons[last] = p1;
 }
 
-template <typename T>
-void xMesh<T>::replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints) {
+void xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints) {
     xPolygon* newPolygon = constructor->createNewElement(merged, this->points);
 
     std::sort(polys.begin(), polys.end(), greater());
-    this->elements[polys.back()] = newPolygon;
+    this->polygons[polys.back()] = newPolygon;
 
     std::unordered_map<NeighboursBySegment,int,NeighboursHasher> map;
     std::unordered_map<IndexSegment, int,SegmentHasher> toIgnore;
@@ -117,38 +131,34 @@ void xMesh<T>::replaceElementsForMerged(std::vector<int> merged, std::vector<int
     }
 }
 
-template <typename T>
-void xMesh<T>::breakMesh(PointSegment segment) {
-    ClosingRule* closingRule = defaultClosingRule();
-
-}
-
-template <typename T>
-void xMesh<T>::breakMesh(PointSegment segment, ClosingRule *closingRule) {
-
-
-
+void xMesh::breakMesh(PointSegment segment) {
 
 
 }
 
-template <typename T>
-void xMesh<T>::erase(Point p) {
+void xMesh::breakMesh(PointSegment segment, ClosingRule *closingRule) {
+
+
+
+
+
+}
+
+void xMesh::erase(Point p) {
     int i = utilities::indexOf(this->points.getList(), p);
 
     if(i<0){
         throw std::invalid_argument("Can not erase a non existent point");
     }
 
-    std::vector<int> containers = this->pointMap.get(p);
+    std::vector<int> containers = this->pointMap.get(p).getNeighbours();
     std::vector<int> merged = merger->mergeElements(containers);
 
     replaceElementsForMerged(merged, containers, {i});
 }
 
-template <typename T>
-void xMesh<T>::erase(xPolygon* elem) {
-    int i = utilities::indexOf(this->elements, elem);
+void xMesh::erase(xPolygon* elem) {
+    int i = utilities::indexOf(this->polygons, elem);
 
     if(i<0){
         throw std::invalid_argument("Can not erase a non existent mesh element");
@@ -167,22 +177,19 @@ void xMesh<T>::erase(xPolygon* elem) {
     replaceElementsForMerged(merged, neighbours, deletedPoints);
 }
 
-template <typename T>
-void xMesh<T>::swapElements(int first, int last) {
+void xMesh::swapElements(int first, int last) {
     std::unordered_map<IndexSegment,int,SegmentHasher> toIgnore;
     swapElements(first, last, toIgnore);
 }
 
-template <typename T>
-void xMesh<T>::swapElements(xPolygon *elem1, xPolygon *elem2) {
-    int first = utilities::indexOf(this->elements, elem1);
-    int last = utilities::indexOf(this->elements, elem2);
+void xMesh::swapElements(xPolygon *elem1, xPolygon *elem2) {
+    int first = utilities::indexOf(this->polygons, elem1);
+    int last = utilities::indexOf(this->polygons, elem2);
 
     swapElements(first, last);
 }
 
-template <typename T>
-void xMesh<T>::swapPoints(int point1, int point2) {
+void xMesh::swapPoints(int point1, int point2) {
     std::vector<int> containersP1 = this->pointMap.get(this->getPoint(point1)).getNeighbours();
     std::vector<int> containersP2 = this->pointMap.get(this->getPoint(point2)).getNeighbours();
 
@@ -195,8 +202,7 @@ void xMesh<T>::swapPoints(int point1, int point2) {
     }
 }
 
-template <typename T>
-void xMesh<T>::swapPoints(Point p1, Point p2) {
+void xMesh::swapPoints(Point p1, Point p2) {
     int point1 = utilities::indexOf(this->points.getList(), p1);
     int point2 = utilities::indexOf(this->points.getList(), p2);
 
@@ -207,27 +213,23 @@ void xMesh<T>::swapPoints(Point p1, Point p2) {
     swapPoints(point1, point2);
 }
 
-template <typename T>
-void xMesh<T>::mergeElements(int elem1, int elem2) {
+void xMesh::mergeElements(int elem1, int elem2) {
     std::vector<int> merged = merger->mergeElements({elem1, elem2});
 }
 
-template <typename T>
-void xMesh<T>::mergeElements(std::vector<int> elements) {
+void xMesh::mergeElements(std::vector<int> elements) {
     std::vector<int> merged = merger->mergeElements(elements);
 
 }
 
 
-template <typename T>
-ContainerInfo xMesh<T>::findContainer(Point p) {
-    int i = utilities::random_integer(0,this->elements.size()-1);
+ContainerInfo xMesh::findContainer(Point p) {
+    int i = utilities::random_integer(0,this->polygons.size()-1);
 
     return this->findContainer(p, i);
 }
 
-template <typename T>
-ContainerInfo xMesh<T>::findContainer(Point p, int startElement) {
+ContainerInfo xMesh::findContainer(Point p, int startElement) {
     while(true){
         bool found = false;
         xPolygon* poly = this->getPolygon(startElement);
@@ -250,10 +252,9 @@ ContainerInfo xMesh<T>::findContainer(Point p, int startElement) {
     }
 }
 
-template <typename T>
-ContainerInfo xMesh<T>::findContainerLinear(Point p) {
+ContainerInfo xMesh::findContainerLinear(Point p) {
     for (int i = 0; i < this->polygons.size(); ++i) {
-        if(this->elements[i]->containsPoint(this->points.getList(), p)){
+        if(this->polygons[i]->containsPoint(this->points.getList(), p)){
             return processContainerInfo(i, p);
         }
     }
@@ -340,23 +341,19 @@ int xMesh::getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<i
     return correctNeighbour;
 }
 
-template <typename T>
-void xMesh<T>::refine(Point p) {
+void xMesh::refine(Point p) {
 
 }
 
-template <typename T>
-void xMesh<T>::refine(std::vector<Point> p) {
+void xMesh::refine(std::vector<Point> p) {
 
 }
 
-template <typename T>
-xPolygon* xMesh<T>::getPolygon(int index) {
-    return this->elements[index];
+xPolygon* xMesh::getPolygon(int index) {
+    return this->polygons[index];
 }
 
-template <typename T>
-ContainerInfo xMesh<T>::processContainerInfo(int poly, Point point) {
+ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
     xPolygon* polygon = getPolygon(poly);
     bool inBoundary = false;
 
@@ -394,30 +391,26 @@ ContainerInfo xMesh<T>::processContainerInfo(int poly, Point point) {
     return info;
 }
 
-template <typename T>
-std::vector<int> xMesh<T>::getNeighboursByPoint(int poly_index) {
+
+std::vector<int> xMesh::getNeighboursByPoint(int poly_index) {
     std::vector<Point> points = this->getPolygon(poly_index)->getPoints(this->points.getList());
 
     return this->pointMap.getAllNeighbours(points, poly_index);
 }
 
-template <typename T>
-std::vector<int> xMesh<T>::getNeighboursBySegment(int poly_index) {
+
+std::vector<int> xMesh::getNeighboursBySegment(int poly_index) {
     std::vector<IndexSegment> segments;
     this->getPolygon(poly_index)->getSegments(segments);
 
     return this->edges.getAllNeighbours(segments, poly_index);
 }
 
-template <typename T>
-bool xMesh<T>::isInBorder(IndexSegment container) {
+bool xMesh::isInBorder(IndexSegment container) {
     return edges.get(container).getFirst()==-1 || edges.get(container).getSecond()==-1;
 }
 
-template <typename T>
-bool xMesh<T>::isEndPoint(IndexSegment segment, Point p) {
+bool xMesh::isEndPoint(IndexSegment segment, Point p) {
     return p == points[segment.getFirst()] || p == points[segment.getSecond()];
 }
 
-template class xMesh<Polygon>;
-template class xMesh<Triangle>;

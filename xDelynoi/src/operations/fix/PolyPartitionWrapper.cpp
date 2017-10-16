@@ -1,8 +1,7 @@
 #include <xDelynoi/operations/fix/PolyPartitionWrapper.h>
 
-PolyPartitionWrapper::PolyPartitionWrapper(xMesh *mesh, ElementConstructor *constructor) {
+PolyPartitionWrapper::PolyPartitionWrapper(xMesh *mesh) {
     this->mesh = mesh;
-    this->constructor = constructor;
 }
 
 SimpleMesh PolyPartitionWrapper::partition(xPolygon *elem) {
@@ -11,7 +10,7 @@ SimpleMesh PolyPartitionWrapper::partition(xPolygon *elem) {
 
     TPPLPoly poly;
 
-    std::vector<Point> points = elem->getPoints(mesh->getPoints());
+    std::vector<Point> points = elem->getPoints(mesh->getPoints().getList());
 
     poly.Init(elem->numberOfSides());
 
@@ -23,18 +22,19 @@ SimpleMesh PolyPartitionWrapper::partition(xPolygon *elem) {
     partition.ConvexPartition_HM(&poly, &result);
 
     UniqueList<Point> partitionPoints;
-    std::vector<xPolygon*> partitionPolygons;
+    std::vector<Polygon> partitionPolygons;
 
     for (auto iter = result.begin(); iter != result.end(); ++iter) {
         std::vector<int> polyPoints;
 
         for (int j = 0; j < iter->GetNumPoints(); ++j) {
-            int index = partitionPoints.push_back(Point(iter->GetPoint(j).x, iter->GetPoint(j).y));
+            Point newPoint(iter->GetPoint(j).x, iter->GetPoint(j).y);
+            int index = partitionPoints.push_back(newPoint);
 
             polyPoints.push_back(index);
         }
 
-        partitionPolygons.push_back(constructor->createNewElement(polyPoints, partitionPoints));
+        partitionPolygons.push_back(Polygon(polyPoints, partitionPoints.getList()));
     }
 
     return SimpleMesh(partitionPolygons, partitionPoints);

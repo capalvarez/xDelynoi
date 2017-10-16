@@ -6,6 +6,9 @@
 #include <delynoi/models/Region.h>
 #include <delynoi/voronoi/TriangleDelaunayGenerator.h>
 #include <xDelynoi/operations/adapter/AddElementsAdapter.h>
+#include <xDelynoi/operations/refine/structures/SimpleMesh.h>
+
+class xMesh;
 
 class MeshRefiner{
 protected:

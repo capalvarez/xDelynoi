@@ -1,20 +1,22 @@
 #include <xDelynoi/operations/refine/structures/SimpleMesh.h>
+#include <delynoi/models/polygon/Triangle.h>
 
-template <class T>
-SimpleMesh<T>::SimpleMesh() {}
+SimpleMesh::SimpleMesh() {}
 
-template <class T>
-SimpleMesh<T>::SimpleMesh(std::vector<T> elems, UniqueList<Point> points) {
+SimpleMesh::SimpleMesh(std::vector<Polygon> elems, UniqueList<Point> points) {
     this->points = points;
     this->elements = elems;
 }
 
-template <class T>
-std::vector<T> SimpleMesh::getElements() {
+SimpleMesh::SimpleMesh(std::vector<Triangle> elems, UniqueList<Point> points) {
+    this->points = points;
+    this->elements.assign(elems.begin(), elems.end());
+}
+
+std::vector<Polygon> SimpleMesh::getElements() {
     return this->elements;
 }
 
-template <class T>
 std::vector<Point> SimpleMesh::getPoints() {
     return this->points.getList();
 }

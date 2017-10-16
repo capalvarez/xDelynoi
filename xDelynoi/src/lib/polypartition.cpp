@@ -25,10 +25,9 @@
 #include <list>
 #include <algorithm>
 #include <set>
+#include <xDelynoi/lib/polypartition.h>
 
 using namespace std;
-
-#include "polypartition.h"
 
 #define TPPL_VERTEXTYPE_REGULAR 0
 #define TPPL_VERTEXTYPE_START 1

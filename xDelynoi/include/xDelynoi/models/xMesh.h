@@ -17,10 +17,13 @@
 #include <xDelynoi/operations/MeshFixer.h>
 #include <xDelynoi/operations/MeshBreaker.h>
 
-template <typename T>
-class xMesh : public Mesh<T>{
+class MeshBreaker;
+class MeshRefiner;
+class MeshFixer;
+class ClosingRule;
+
+class xMesh : public Mesh<xPolygon*>{
 private:
-    std::vector<xPolygon*> elements;
     xSegmentMap edges;
     xPointMap pointMap;
 
@@ -34,7 +37,13 @@ private:
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
     void replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints);
 public:
-    xMesh(Mesh<T> mesh);
+    xMesh(Mesh<Polygon> mesh);
+    xMesh(Mesh<Triangle> mesh);
+
+    xSegmentMap& getSegments();
+    xSegmentMap getSegments() const;
+    xPointMap& getPointMap();
+    xPointMap getPointMap() const;
 
     void breakMesh(PointSegment segment);
     void breakMesh(PointSegment segment, ClosingRule* closingRule);

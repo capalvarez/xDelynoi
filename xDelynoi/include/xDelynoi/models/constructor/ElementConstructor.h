@@ -4,6 +4,7 @@
 #include <vector>
 #include <delynoi/models/basic/Point.h>
 #include <utilities/UniqueList.h>
+#include <xDelynoi/models/xPolygon.h>
 
 class ElementConstructor{
 public:

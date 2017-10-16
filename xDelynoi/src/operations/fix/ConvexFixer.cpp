@@ -2,7 +2,7 @@
 #include <xDelynoi/operations/fix/PolyPartitionWrapper.h>
 
 ConvexFixer::ConvexFixer(xMesh *mesh, ElementConstructor *constructor) {
-    this->partitioner = new PolyPartitionWrapper(mesh, constructor);
+    this->partitioner = new PolyPartitionWrapper(mesh);
     this->mesh = mesh;
     this->constructor = constructor;
 }
@@ -27,7 +27,7 @@ void ConvexFixer::fixMesh() {
 void ConvexFixer::fixElement(xPolygon *elem) {
     UniqueList<Point>& points = mesh->getPoints();
 
-    if(elem->isConvex(points.getList()){
+    if(elem->isConvex(points.getList())){
         fixNonConvex(elem);
     }
 }

@@ -29,7 +29,7 @@ void TriangulateClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Nei
 
     SimpleMesh meshToInclude(triangulation.getPolygons(), triangulation.getPoints());
 
-    std::unordered_map<int,int> triangulationMap = AddElementsAdapter::includeNewPoints(points, mesh->getPoints());
+    std::unordered_map<int,int> triangulationMap = AddElementsAdapter::includeNewPoints(points, mesh->getPoints().getList());
     AddElementsAdapter::includeNewElements(mesh, meshToInclude, triangulationMap, polygon, constructor);
 
     delete constructor;

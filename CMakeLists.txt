@@ -12,4 +12,5 @@ enable_testing()
 add_subdirectory(lib/utilities)
 add_subdirectory(lib/delynoi)
 add_subdirectory(xDelynoi)
+add_subdirectory(test)
 

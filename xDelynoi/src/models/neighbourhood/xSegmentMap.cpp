@@ -114,7 +114,8 @@ std::vector<int> xSegmentMap::getAllNeighbours(std::vector<IndexSegment> segment
     for(IndexSegment s: segments){
         NeighboursBySegment n = get(s);
 
-        neighbours.push_back(getOther(n, polygon));
+        int other = getOther(n, polygon);
+        neighbours.push_back(other);
     }
 
     return neighbours.getList();

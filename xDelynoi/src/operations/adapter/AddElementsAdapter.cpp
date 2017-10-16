@@ -20,7 +20,7 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
     std::vector<xPolygon*>& meshElements = mesh->getPolygons();
     SegmentMap& segments = mesh->getSegments();
 
-    std::vector<xPolygon*> elements = toInclude.getElements();
+    std::vector<Polygon> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
 
     std::vector<IndexSegment> containerSegments;
@@ -36,7 +36,7 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
     }
 
     for (int i = 0; i < elements.size() ; ++i) {
-        std::vector<int> oldPoints = elements[i]->getPoints();
+        std::vector<int> oldPoints = elements[i].getPoints();
         int n = oldPoints.size();
 
         std::vector<int> newPolygonPoints;
@@ -104,9 +104,5 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
             poly->replaceSegment(s.first, s.second, meshPoints.getList());
         }
     }
-
-
-
-
-
 }
+

@@ -27,9 +27,11 @@ void PolygonClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Neighbo
         }
     }
 
+    Point closingPoint = this->getClosingPoint(intersected, points, intersection);
+
     int pIndex = points.push_back(p);
     int p1Index = utilities::indexOf(points.getList(), info.intersection);
-    int p2Index = points.push_back(this->getClosingPoint(intersected, points, intersection));
+    int p2Index = points.push_back(closingPoint);
 
     std::vector<int> new1 = {p2Index, pIndex, p1Index};
     std::vector<int> new2 = {p1Index, pIndex, p2Index};
