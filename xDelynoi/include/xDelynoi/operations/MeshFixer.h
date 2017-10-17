@@ -7,8 +7,8 @@ class xMesh;
 
 class MeshFixer{
 public:
-    virtual void fixMesh(xMesh* mesh)=0;
-    virtual void fixElement(xPolygon* elem, xMesh* mesh)=0;
+    virtual void fixMesh()=0;
+    virtual void fixElement(xPolygon elem)=0;
 };
 
 #endif

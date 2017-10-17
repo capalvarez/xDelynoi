@@ -158,6 +158,7 @@ void xMesh::erase(xPolygon elem) {
     }
 
     std::vector<int> neighbours = getNeighboursByPoint(i);
+    neighbours.push_back(i);
     std::vector<std::vector<int>> lists;
 
     for(int n: neighbours){
@@ -214,6 +215,7 @@ void xMesh::swapPoints(Point p1, Point p2) {
 
 void xMesh::mergeElements(int elem1, int elem2) {
     std::vector<int> merged = merger->mergeElements({elem1, elem2});
+
 }
 
 void xMesh::mergeElements(std::vector<int> elements) {
@@ -221,6 +223,9 @@ void xMesh::mergeElements(std::vector<int> elements) {
 
 }
 
+void xMesh::fix(MeshFixer *fixer) {
+    fixer->fixMesh();
+}
 
 ContainerInfo xMesh::findContainer(Point p) {
     int i = utilities::random_integer(0,this->polygons.size()-1);

@@ -8,6 +8,7 @@
 #include <delynoi/models/Mesh.h>
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
 #include <xDelynoi/operations/MeshBreaker.h>
+#include <xDelynoi/operations/MeshFixer.h>
 
 class MeshBreaker;
 class MeshRefiner;
@@ -49,6 +50,8 @@ public:
 
     void mergeElements(int elem1, int elem2);
     void mergeElements(std::vector<int> elements);
+
+    void fix(MeshFixer* fixer);
 
     ContainerInfo findContainer(Point p);
     ContainerInfo findContainer(Point p, int startElement);
