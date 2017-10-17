@@ -3,6 +3,7 @@
 
 #include <xDelynoi/operations/MeshFixer.h>
 #include <xDelynoi/operations/fix/Partitioner.h>
+#include <xDelynoi/operations/adapter/AddElementsAdapter.h>
 
 class ConvexFixer: public MeshFixer {
 private:

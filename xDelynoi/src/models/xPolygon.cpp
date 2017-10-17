@@ -11,6 +11,8 @@ xPolygon::xPolygon(Polygon polygon) {
 
 xPolygon::xPolygon(std::vector<int> points, UniqueList<Point> meshPoints) : Polygon(points, meshPoints.getList()){}
 
+xPolygon::xPolygon(std::vector<int> points, std::vector<Point> meshPoints) : Polygon(points, meshPoints) {}
+
 bool xPolygon::isVertex(Point p, std::vector<Point> points, int &vertexIndex) {
     for (int i: this->points){
         if(points[i]==p){
@@ -114,7 +116,7 @@ Pair<int> xPolygon::segmentNotContained(std::vector<IndexSegment> s) {
     return Pair<int>(-1,-1);
 }
 
-void xPolygon::replaceVertex(int oldVertex, int newVertex, xSegmentMap& edges) {
+void xPolygon::replaceVertex(int oldVertex, int newVertex, xSegmentMap* edges) {
     bool changePrev = false, changeNext = false;
     NeighboursBySegment nPrev, nNext;
 
@@ -124,15 +126,15 @@ void xPolygon::replaceVertex(int oldVertex, int newVertex, xSegmentMap& edges) {
     IndexSegment prev(this->points[(n+i-1)%n], this->points[i]);
     IndexSegment next(this->points[i], this->points[(n+i+1)%n]);
 
-    if(edges.containsSegment(prev)){
-        nPrev = edges.get(prev);
-        edges.deleteElement(prev);
+    if(edges->containsSegment(prev)){
+        nPrev = edges->get(prev);
+        edges->deleteElement(prev);
         changePrev = true;
     }
 
-    if(edges.containsSegment(next)){
-        nNext = edges.get(next);
-        edges.deleteElement(next);
+    if(edges->containsSegment(next)){
+        nNext = edges->get(next);
+        edges->deleteElement(next);
         changeNext = true;
     }
 
@@ -142,13 +144,13 @@ void xPolygon::replaceVertex(int oldVertex, int newVertex, xSegmentMap& edges) {
 
     if(changePrev){
         prev = IndexSegment(this->points[(n+i-1)%n], this->points[i]);
-        edges.insert(prev, nPrev);
+        edges->insert(prev, nPrev);
     }
 
 
     if(changeNext){
         next = IndexSegment(this->points[i], this->points[(n+i+1)%n]);
-        edges.insert(next, nNext);
+        edges->insert(next, nNext);
     }
 }
 

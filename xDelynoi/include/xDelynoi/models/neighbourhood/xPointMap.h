@@ -2,6 +2,7 @@
 #define XDELYNOI_XPOINTMAP_H
 
 #include <delynoi/models/neighbourhood/PointMap.h>
+#include <utilities/UniqueList.h>
 
 class xPointMap : public PointMap{
 public:

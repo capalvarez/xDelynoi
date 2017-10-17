@@ -5,18 +5,18 @@ VertexIndexMerger::VertexIndexMerger(xMesh *mesh) {
 }
 
 bool VertexIndexMerger::areMergeable(xPolygon poly1, int poly2) {
-    xSegmentMap edges = mesh->getSegments();
+    xSegmentMap* edges = mesh->getSegments();
 
     xPolygon p2 = mesh->getPolygon(poly2);
 
     std::vector<IndexSegment> poly1_segments;
     poly1.getSegments(poly1_segments);
 
-    bool last_was_neighbour = edges.isNeighbour(poly1_segments.back(), poly2);
+    bool last_was_neighbour = edges->isNeighbour(poly1_segments.back(), poly2);
     bool exited_once = false;
 
     for(IndexSegment s: poly1_segments){
-        bool areNeighbours = edges.isNeighbour(s, poly2);
+        bool areNeighbours = edges->isNeighbour(s, poly2);
 
         if(last_was_neighbour && !areNeighbours){
             if(!exited_once){

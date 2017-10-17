@@ -1,16 +1,12 @@
 #ifndef XDELYNOI_XMESH_H
 #define XDELYNOI_XMESH_H
 
-#include <delynoi/models/Mesh.h>
+#include <xDelynoi/operations/MeshMerger.h>
 #include <xDelynoi/models/structures/ContainerInfo.h>
 #include <xDelynoi/models/structures/NeighbourInfo.h>
-#include <xDelynoi/models/xPolygon.h>
-#include <xDelynoi/models/neighbourhood/xSegmentMap.h>
+#include "xPolygon.h"
+#include <delynoi/models/Mesh.h>
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
-#include <xDelynoi/operations/MeshMerger.h>
-#include <xDelynoi/utilities/xdelynoi_utilities.h>
-#include <xDelynoi/operations/MeshRefiner.h>
-#include <xDelynoi/operations/MeshFixer.h>
 #include <xDelynoi/operations/MeshBreaker.h>
 
 class MeshBreaker;
@@ -18,10 +14,11 @@ class MeshRefiner;
 class MeshFixer;
 class ClosingRule;
 
+
 class xMesh : public Mesh<xPolygon>{
 private:
-    xSegmentMap edges;
-    xPointMap pointMap;
+    xSegmentMap* xEdges;
+    xPointMap* xpointMap;
 
     MeshMerger* merger;
     MeshRefiner* refiner;
@@ -35,10 +32,8 @@ public:
     xMesh(Mesh<Polygon> mesh);
     xMesh(Mesh<Triangle> mesh);
 
-    xSegmentMap& getSegments();
-    xSegmentMap getSegments() const;
-    xPointMap& getPointMap();
-    xPointMap getPointMap() const;
+    xSegmentMap* getSegments();
+    xPointMap* getPointMap();
 
     void breakMesh(PointSegment segment);
     void breakMesh(PointSegment segment, ClosingRule* closingRule);

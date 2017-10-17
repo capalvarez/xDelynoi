@@ -1,4 +1,6 @@
 #include <xDelynoi/operations/break/closingrules/PolygonClosingRule.h>
+#include <xDelynoi/operations/break/functions/break_functions.h>
+#include <xDelynoi/operations/break/reconstructors/IdentityReconstructor.h>
 
 void PolygonClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, NeighbourInfo info) {
     UniqueList<Point>& points = mesh->getPoints();
@@ -7,7 +9,7 @@ void PolygonClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Neighbo
         return;
     }
 
-    xSegmentMap segmentMap = mesh->getSegments();
+    xSegmentMap* segmentMap = mesh->getSegments();
     xPolygon poly = mesh->getPolygon(polygon);
 
     std::vector<IndexSegment> segments;
@@ -36,8 +38,7 @@ void PolygonClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Neighbo
     std::vector<int> new1 = {p2Index, pIndex, p1Index};
     std::vector<int> new2 = {p1Index, pIndex, p2Index};
 
-    NeighbourInfo n1 (segmentMap.getOther(intersected,polygon), intersected, intersection, false);
-
-    MeshBreaker breaker(mesh, this);
-    breaker.breakFromGivenSegment(n1, info, poly, new1, new2, p1Index, p2Index, -1);
+    NeighbourInfo n1 (segmentMap->getOther(intersected,polygon), intersected, intersection, false);
+    ElementReconstructor* reconstructor = new IdentityReconstructor();
+    break_functions::partitionPolygonFromSegment(mesh, reconstructor, n1, info, poly, new1, new2, p1Index, p2Index, -1);
 }

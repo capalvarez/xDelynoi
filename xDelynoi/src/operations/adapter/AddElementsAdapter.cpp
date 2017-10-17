@@ -17,7 +17,7 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
 
     UniqueList<Point>& meshPoints = mesh->getPoints();
     std::vector<xPolygon>& meshElements = mesh->getPolygons();
-    SegmentMap& segments = mesh->getSegments();
+    SegmentMap* segments = mesh->getSegments();
 
     std::vector<Polygon> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
@@ -67,13 +67,13 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
 
                 for (int k = 0; k < containerCandidates.size(); ++k) {
                     if(containerCandidates[k].contains(meshPoints.getList(),edge)){
-                        NeighboursBySegment neighbours = segments.get(containerCandidates[k]);
+                        NeighboursBySegment neighbours = segments->get(containerCandidates[k]);
 
                         bool is_first = neighbours.getFirst() == originalIndex;
 
                         int otherNeighbour = is_first? neighbours.getSecond() : neighbours.getFirst();
 
-                        segments.insert(edge, NeighboursBySegment(index, otherNeighbour));
+                        segments->insert(edge, NeighboursBySegment(index, otherNeighbour));
 
                         std::unordered_map<IndexSegment,std::vector<IndexSegment>,SegmentHasher>& polyInfo =
                                 changesInNeighbours[otherNeighbour];
@@ -85,10 +85,10 @@ void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, s
                 }
 
                 if(!changed){
-                    segments.insert(edge, index);
+                    segments->insert(edge, index);
                 }
             }else{
-                segments.insert(edge,index);
+                segments->insert(edge,index);
             }
         }
     }

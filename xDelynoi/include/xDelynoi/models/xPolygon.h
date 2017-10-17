@@ -10,12 +10,13 @@ private:
 public:
     xPolygon(Polygon polygon);
     xPolygon(std::vector<int> points, UniqueList<Point> meshPoints);
+    xPolygon(std::vector<int> points, std::vector<Point> meshPoints);
     Pair<int> commonEdgesBorderPoints(xPolygon other, std::vector<Point> points, bool& pacman_case);
     bool isVertex(Point p, std::vector<Point> points, int &vertexIndex);
     bool isVertex(Point p, std::vector<Point> points);
     bool isVertex(int index);
     std::vector<IndexSegment> getAdjacentEdges(int i);
-    void replaceVertex(int oldVertex, int newVertex, xSegmentMap& edges);
+    void replaceVertex(int oldVertex, int newVertex, xSegmentMap* edges);
 
     void replaceSegment(IndexSegment seg, std::vector<IndexSegment> segs, std::vector<Point> points);
     int numberOfInteresectedSegments(PointSegment direction, std::vector<Point> points);

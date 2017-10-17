@@ -1,4 +1,6 @@
 #include <xDelynoi/operations/break/closingrules/TriangulateClosingRule.h>
+#include <xDelynoi/operations/refine/structures/SimpleMesh.h>
+#include <xDelynoi/operations/adapter/AddElementsAdapter.h>
 
 void TriangulateClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, NeighbourInfo info) {
     UniqueList<Point>& points = mesh->getPoints();
@@ -8,8 +10,8 @@ void TriangulateClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, Nei
         return;
     }
 
-    xPointMap& pointMap = mesh->getPointMap();
-    xSegmentMap& segmentMap = mesh->getSegments();
+    xPointMap* pointMap = mesh->getPointMap();
+    xSegmentMap* segmentMap = mesh->getSegments();
     xPolygon poly = mesh->getPolygon(polygon);
 
     int pIndex = points.push_back(p);

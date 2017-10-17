@@ -1,10 +1,8 @@
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
-#include <utilities/UniqueList.h>
 
+xPointMap::xPointMap() : PointMap(){}
 
-xPointMap::xPointMap() {}
-
-xPointMap::xPointMap(PointMap pointMap) {
+xPointMap::xPointMap(PointMap pointMap) : PointMap(){
     this->map = pointMap.getMap();
 }
 

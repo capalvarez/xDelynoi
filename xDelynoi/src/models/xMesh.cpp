@@ -1,8 +1,7 @@
 #include <xDelynoi/models/xMesh.h>
-#include <xDelynoi/operations/merge/VertexIndexMerger.h>
-#include <xDelynoi/models/structures/greater.h>
 #include <xDelynoi/utilities/vector_ops.h>
-#include <xDelynoi/operations/refine/TriangulateRefiner.h>
+#include <xDelynoi/utilities/xdelynoi_utilities.h>
+#include <xDelynoi/models/structures/greater.h>
 
 xMesh::xMesh(Mesh<Triangle> mesh) {
     for(Triangle e: mesh.getPolygons()){
@@ -11,10 +10,12 @@ xMesh::xMesh(Mesh<Triangle> mesh) {
         this->polygons.push_back(newElement);
     }
 
-    this->pointMap = xPointMap(mesh.getPointMap());
-    this->edges = xSegmentMap(mesh.getSegments());
-    this->merger = new VertexIndexMerger(this);
-    this->refiner = new TriangulateRefiner(this);
+    this->points = mesh.getPoints();
+
+    this->xpointMap = new xPointMap(*mesh.getPointMap());
+    this->pointMap =  this->xpointMap;
+    this->xEdges = new xSegmentMap(*mesh.getSegments());
+    this->edges = this->xEdges;
 }
 
 xMesh::xMesh(Mesh<Polygon> mesh) {
@@ -24,25 +25,12 @@ xMesh::xMesh(Mesh<Polygon> mesh) {
         this->polygons.push_back(newElement);
     }
 
-    this->pointMap = xPointMap(mesh.getPointMap());
-    this->edges = xSegmentMap(mesh.getSegments());
-    this->merger = new VertexIndexMerger(this);
-}
+    this->points = mesh.getPoints();
 
-xSegmentMap &xMesh::getSegments() {
-    return this->edges;
-}
-
-xSegmentMap xMesh::getSegments() const {
-    return this->edges;
-}
-
-xPointMap &xMesh::getPointMap() {
-    return this->pointMap;
-}
-
-xPointMap xMesh::getPointMap() const {
-    return this->pointMap;
+    this->xpointMap = new xPointMap(*mesh.getPointMap());
+    this->pointMap = this->xpointMap;
+    this->xEdges = new xSegmentMap(*mesh.getSegments());
+    this->edges = this->xEdges;
 }
 
 void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore) {
@@ -59,7 +47,7 @@ void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, i
         auto got = toIgnore.find(s);
 
         if(got==toIgnore.end()){
-            edges.changeNeighbour(s, first, last);
+            xEdges->changeNeighbour(s, first, last);
         }
     }
 
@@ -67,16 +55,16 @@ void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, i
         auto got = toIgnore.find(s);
 
         if (got == toIgnore.end()) {
-            edges.changeNeighbour(s, last, first);
+            xEdges->changeNeighbour(s, last, first);
         }
     }
 
     for(Point p: p1.getPoints(this->points.getList())){
-        pointMap.changeNeighbour(p, first, last);
+        xpointMap->changeNeighbour(p, first, last);
     }
 
     for(Point p: p2.getPoints(this->points.getList())){
-        pointMap.changeNeighbour(p, last, first);
+        xpointMap->changeNeighbour(p, last, first);
     }
 
 
@@ -113,7 +101,7 @@ void xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> p
         poly2.getSegments(poly2Segments);
 
         for(IndexSegment s: poly2Segments){
-            edges.replaceOrDelete(s, this->polygons.size() - 1, i2, polys.back(), map, toIgnore, swappedIndexes);
+            xEdges->replaceOrDelete(s, this->polygons.size() - 1, i2, polys.back(), map, toIgnore, swappedIndexes);
         }
 
         this->polygons.pop_back();
@@ -125,7 +113,7 @@ void xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> p
         std::vector<Point>& points = this->points.getList();
         points.pop_back();
 
-        this->pointMap.deleteElement(p);
+        xpointMap->deleteElement(p);
     }
 }
 
@@ -149,7 +137,7 @@ void xMesh::erase(Point p) {
         throw std::invalid_argument("Can not erase a non existent point");
     }
 
-    std::vector<int> containers = this->pointMap.get(p).getNeighbours();
+    std::vector<int> containers = xpointMap->get(p).getNeighbours();
     std::vector<int> merged = merger->mergeElements(containers);
 
     replaceElementsForMerged(merged, containers, {i});
@@ -188,15 +176,15 @@ void xMesh::swapElements(xPolygon elem1, xPolygon elem2) {
 }
 
 void xMesh::swapPoints(int point1, int point2) {
-    std::vector<int> containersP1 = this->pointMap.get(this->getPoint(point1)).getNeighbours();
-    std::vector<int> containersP2 = this->pointMap.get(this->getPoint(point2)).getNeighbours();
+    std::vector<int> containersP1 = xpointMap->get(this->getPoint(point1)).getNeighbours();
+    std::vector<int> containersP2 = xpointMap->get(this->getPoint(point2)).getNeighbours();
 
     for(int i: containersP1){
-        this->getPolygon(i).replaceVertex(point1, point2, this->edges);
+        this->getPolygon(i).replaceVertex(point1, point2, this->xEdges);
     }
 
     for(int i: containersP2){
-        this->getPolygon(i).replaceVertex(point2, point1, this->edges);
+        this->getPolygon(i).replaceVertex(point2, point1, this->xEdges);
     }
 }
 
@@ -279,7 +267,7 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
             continue;
         }
 
-        NeighboursBySegment edge = this->edges.get(polySeg[j]);
+        NeighboursBySegment edge = this->edges->get(polySeg[j]);
 
         int next_poly = edge.getFirst()!=poly_index? edge.getFirst() : edge.getSecond();
         auto find = std::find(previous.begin(), previous.end(), next_poly);
@@ -290,7 +278,7 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
         // Special case: Intersection through vertex
         int vertexIndex;
         if(poly.isVertex(p, this->points.getList(), vertexIndex)){
-            NeighboursByPoint neighbourInfo = this->pointMap.get(this->points[vertexIndex]);
+            NeighboursByPoint neighbourInfo = this->pointMap->get(this->points[vertexIndex]);
             std::vector<int> neighbours = neighbourInfo.getNeighbours();
             neighbours.erase(std::remove(neighbours.begin(), neighbours.end(), poly_index));
 
@@ -373,11 +361,11 @@ ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
         }
 
         if(vertexIndex!=-1){
-            NeighboursByPoint n = pointMap.get(point);
+            NeighboursByPoint n = pointMap->get(point);
 
             return ContainerInfo(point, n.getNeighbours());
         }else{
-            NeighboursBySegment n = edges.get(container_edge);
+            NeighboursBySegment n = edges->get(container_edge);
 
             return ContainerInfo(point, n.getFirst(), n.getSecond());
         }
@@ -393,7 +381,7 @@ ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
 std::vector<int> xMesh::getNeighboursByPoint(int poly_index) {
     std::vector<Point> points = this->getPolygon(poly_index).getPoints(this->points.getList());
 
-    return this->pointMap.getAllNeighbours(points, poly_index);
+    return xpointMap->getAllNeighbours(points, poly_index);
 }
 
 
@@ -401,14 +389,21 @@ std::vector<int> xMesh::getNeighboursBySegment(int poly_index) {
     std::vector<IndexSegment> segments;
     this->getPolygon(poly_index).getSegments(segments);
 
-    return this->edges.getAllNeighbours(segments, poly_index);
+    return xEdges->getAllNeighbours(segments, poly_index);
 }
 
 bool xMesh::isInBorder(IndexSegment container) {
-    return edges.get(container).getFirst()==-1 || edges.get(container).getSecond()==-1;
+    return edges->get(container).getFirst()==-1 || edges->get(container).getSecond()==-1;
 }
 
 bool xMesh::isEndPoint(IndexSegment segment, Point p) {
     return p == points[segment.getFirst()] || p == points[segment.getSecond()];
 }
 
+xSegmentMap *xMesh::getSegments() {
+    return this->xEdges;
+}
+
+xPointMap *xMesh::getPointMap() {
+    return this->xpointMap;
+}
