@@ -17,11 +17,13 @@ xMesh::xMesh(Mesh<Triangle> mesh) {
     this->pointMap =  this->xpointMap;
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
+
+    this->merger = new VertexIndexMerger(this);
 }
 
 xMesh::xMesh(Mesh<Polygon> mesh) {
     for(Polygon e: mesh.getPolygons()){
-        xPolygon newElement (e);
+        xPolygon newElement(e);
 
         this->polygons.push_back(newElement);
     }
@@ -29,7 +31,7 @@ xMesh::xMesh(Mesh<Polygon> mesh) {
     this->points = mesh.getPoints();
 
     this->xpointMap = new xPointMap(*mesh.getPointMap());
-    this->pointMap = this->xpointMap;
+    this->pointMap =  this->xpointMap;
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
 
@@ -159,16 +161,8 @@ void xMesh::erase(xPolygon elem) {
 
     std::vector<int> neighbours = getNeighboursByPoint(i);
     neighbours.push_back(i);
-    std::vector<std::vector<int>> lists;
 
-    for(int n: neighbours){
-        lists.push_back(this->getPolygon(n).getPoints());
-    }
-
-    std::vector<int> merged = merger->mergeElements(neighbours);
-    std::vector<int> deletedPoints = vector_ops::difference(vector_ops::mergeVectors(lists), merged);
-
-    replaceElementsForMerged(merged, neighbours, deletedPoints);
+    this->mergeElements(neighbours);
 }
 
 void xMesh::swapElements(int first, int last) {
@@ -214,13 +208,21 @@ void xMesh::swapPoints(Point p1, Point p2) {
 }
 
 void xMesh::mergeElements(int elem1, int elem2) {
-    std::vector<int> merged = merger->mergeElements({elem1, elem2});
-
+    std::vector<int> elements = {elem1, elem2};
+    mergeElements(elements);
 }
 
 void xMesh::mergeElements(std::vector<int> elements) {
     std::vector<int> merged = merger->mergeElements(elements);
+    std::vector<std::vector<int>> lists;
 
+    for(int n: elements){
+        lists.push_back(this->getPolygon(n).getPoints());
+    }
+
+    std::vector<int> deletedPoints = vector_ops::difference(vector_ops::mergeVectors(lists), merged);
+
+    replaceElementsForMerged(merged, elements, deletedPoints);
 }
 
 void xMesh::fix(MeshFixer *fixer) {

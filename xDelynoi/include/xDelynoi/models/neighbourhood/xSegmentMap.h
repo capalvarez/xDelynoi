@@ -5,7 +5,7 @@
 
 class xSegmentMap : public SegmentMap{
 private:
-    void changeNeighbour(NeighboursBySegment n, int oldN, int newN);
+    void changeNeighbour(NeighboursBySegment& n, int oldN, int newN);
     int getOther(NeighboursBySegment n, int other);
     bool isNeighbour(NeighboursBySegment n, int poly);
 public:

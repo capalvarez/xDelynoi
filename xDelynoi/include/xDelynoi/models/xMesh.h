@@ -24,17 +24,30 @@ private:
     MeshMerger* merger;
     MeshRefiner* refiner;
     MeshBreaker* breaker;
-    MeshFixer* fixer;
 
     ContainerInfo processContainerInfo(int poly, Point point);
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
     void replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints);
 public:
-    xMesh(Mesh<Polygon> mesh);
     xMesh(Mesh<Triangle> mesh);
+    xMesh(Mesh<Polygon> mesh);
 
     xSegmentMap* getSegments();
     xPointMap* getPointMap();
+
+    ContainerInfo findContainer(Point p);
+    ContainerInfo findContainer(Point p, int startElement);
+    ContainerInfo findContainerLinear(Point p);
+
+    NeighbourInfo getNeighbour(int poly_index, PointSegment direction);
+    NeighbourInfo getNeighbour(int poly_index, PointSegment direction, std::vector<int> &previous);
+    int getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<int> vertexSet, int vertexIndex);
+
+    std::vector<int> getNeighboursByPoint(int poly_index);
+    std::vector<int> getNeighboursBySegment(int poly_index);
+
+    bool isInBorder(IndexSegment container);
+    bool isEndPoint(IndexSegment segment, Point point);
 
     void breakMesh(PointSegment segment);
     void breakMesh(PointSegment segment, ClosingRule* closingRule);
@@ -53,23 +66,8 @@ public:
 
     void fix(MeshFixer* fixer);
 
-    ContainerInfo findContainer(Point p);
-    ContainerInfo findContainer(Point p, int startElement);
-    ContainerInfo findContainerLinear(Point p);
-
-    NeighbourInfo getNeighbour(int poly_index, PointSegment direction);
-    NeighbourInfo getNeighbour(int poly_index, PointSegment direction, std::vector<int> &previous);
-    int getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<int> vertexSet, int vertexIndex);
-
     void refine(Point p);
     void refine(std::vector<Point> p);
-
-    std::vector<int> getNeighboursByPoint(int poly_index);
-    std::vector<int> getNeighboursBySegment(int poly_index);
-
-    bool isInBorder(IndexSegment container);
-
-    bool isEndPoint(IndexSegment segment, Point point);
 };
 
 #endif
