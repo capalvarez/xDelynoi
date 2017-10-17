@@ -64,7 +64,6 @@ public:
     std::vector<int> getNeighboursByPoint(int poly_index);
     std::vector<int> getNeighboursBySegment(int poly_index);
 
-    xPolygon getPolygon(int index);
     bool isInBorder(IndexSegment container);
 
     bool isEndPoint(IndexSegment segment, Point point);

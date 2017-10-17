@@ -2,6 +2,7 @@
 #include <xDelynoi/utilities/vector_ops.h>
 #include <xDelynoi/utilities/xdelynoi_utilities.h>
 #include <xDelynoi/models/structures/greater.h>
+#include <xDelynoi/operations/merge/VertexIndexMerger.h>
 
 xMesh::xMesh(Mesh<Triangle> mesh) {
     for(Triangle e: mesh.getPolygons()){
@@ -31,6 +32,8 @@ xMesh::xMesh(Mesh<Polygon> mesh) {
     this->pointMap = this->xpointMap;
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
+
+    this->merger = new VertexIndexMerger(this);
 }
 
 void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore) {
@@ -77,6 +80,10 @@ void xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> p
 
     std::sort(polys.begin(), polys.end(), greater());
     this->polygons[polys.back()] = newPolygon;
+
+    for (int j = 0; j < merged.size(); ++j) {
+        xpointMap->insert(this->getPoint(merged[j]), polys.back());
+    }
 
     std::unordered_map<NeighboursBySegment,int,NeighboursHasher> map;
     std::unordered_map<IndexSegment, int,SegmentHasher> toIgnore;
@@ -186,6 +193,12 @@ void xMesh::swapPoints(int point1, int point2) {
     for(int i: containersP2){
         this->getPolygon(i).replaceVertex(point2, point1, this->xEdges);
     }
+
+    Point p1 = this->getPoint(point1);
+    Point p2 = this->getPoint(point2);
+
+    this->points[point1] = p2;
+    this->points[point2] = p1;
 }
 
 void xMesh::swapPoints(Point p1, Point p2) {
@@ -333,10 +346,6 @@ void xMesh::refine(Point p) {
 
 void xMesh::refine(std::vector<Point> p) {
 
-}
-
-xPolygon xMesh::getPolygon(int index) {
-    return this->polygons[index];
 }
 
 ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
