@@ -1,8 +1,6 @@
 #include <xDelynoi/operations/merge/VertexIndexMerger.h>
 
-VertexIndexMerger::VertexIndexMerger(xMesh *mesh) {
-    this->mesh = mesh;
-}
+VertexIndexMerger::VertexIndexMerger() {}
 
 bool VertexIndexMerger::areMergeable(xPolygon poly1, int poly2) {
     xSegmentMap* edges = mesh->getSegments();

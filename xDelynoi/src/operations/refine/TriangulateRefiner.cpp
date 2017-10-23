@@ -1,6 +1,6 @@
 #include <xDelynoi/operations/refine/TriangulateRefiner.h>
 
-TriangulateRefiner::TriangulateRefiner(xMesh *mesh) : MeshRefiner(mesh){}
+TriangulateRefiner::TriangulateRefiner(){}
 
 SimpleMesh TriangulateRefiner::computeElements(xPolygon elem, std::vector<Point> toAdd) {
     UniqueList<Point>& points = this->mesh->getPoints();

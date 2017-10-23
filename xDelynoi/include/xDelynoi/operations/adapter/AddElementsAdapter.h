@@ -9,8 +9,6 @@
 #include <xDelynoi/operations/refine/structures/SimpleMesh.h>
 #include <xDelynoi/models/xMesh.h>
 
-class xMesh;
-
 class AddElementsAdapter {
 public:
     static std::unordered_map<int, int> includeNewPoints(UniqueList<Point> &meshPoints, std::vector<Point> points);

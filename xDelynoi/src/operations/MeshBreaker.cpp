@@ -1,9 +1,8 @@
 #include <xDelynoi/operations/MeshBreaker.h>
 #include <xDelynoi/operations/break/functions/break_functions.h>
 
-MeshBreaker::MeshBreaker(xMesh *mesh, ClosingRule *close, ElementReconstructor *reconstructor) {
+MeshBreaker::MeshBreaker(ClosingRule *close, ElementReconstructor *reconstructor) {
     this->closingRule = close;
-    this->mesh = mesh;
     this->constructor = reconstructor;
 }
 

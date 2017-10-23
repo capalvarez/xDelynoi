@@ -2,7 +2,7 @@
 #include <delynoi/models/generator/PointGenerator.h>
 #include <delynoi/models/Region.h>
 
-xMesh::xMesh(Mesh<Triangle> mesh) {
+xMesh::xMesh(Mesh<Triangle> mesh, Config config) {
     for(const Triangle e: mesh.getPolygons()){
         xPolygon newElement(e);
 
@@ -16,10 +16,14 @@ xMesh::xMesh(Mesh<Triangle> mesh) {
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
 
-    this->merger = new VertexIndexMerger(this);
+    config.setMesh(this);
+
+    this->merger = config.merger;
+    this->refiner = config.refiner;
+    this->breaker = config.breaker;
 }
 
-xMesh::xMesh(Mesh<Polygon> mesh) {
+xMesh::xMesh(Mesh<Polygon> mesh, Config config) {
     for(const Polygon e: mesh.getPolygons()){
         xPolygon newElement(e);
 
@@ -33,8 +37,11 @@ xMesh::xMesh(Mesh<Polygon> mesh) {
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
 
-    this->merger = new VertexIndexMerger(this);
-    this->reconstructor = new IdentityReconstructor();
+    config.setMesh(this);
+
+    this->merger = config.merger;
+    this->refiner = config.refiner;
+    this->breaker = config.breaker;
 }
 
 void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore) {
@@ -128,8 +135,7 @@ int xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> po
 }
 
 void xMesh::breakMesh(PointSegment segment) {
-//MeshBreaker breaker(this, reconstructor);
-//    breaker.breakMesh(segment);
+    this->breaker->breakMesh(segment);
 }
 
 void xMesh::breakMesh(std::vector<PointSegment> segments) {

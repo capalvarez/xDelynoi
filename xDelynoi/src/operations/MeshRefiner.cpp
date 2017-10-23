@@ -1,8 +1,6 @@
 #include <xDelynoi/operations/MeshRefiner.h>
 
-MeshRefiner::MeshRefiner(xMesh *mesh) {
-    this->mesh = mesh;
-}
+MeshRefiner::MeshRefiner() {}
 
 void MeshRefiner::refine(xPolygon elem, std::vector<Point> pointsToAdd) {
     int elemIndex = utilities::indexOf(this->mesh->getPolygons(), elem);

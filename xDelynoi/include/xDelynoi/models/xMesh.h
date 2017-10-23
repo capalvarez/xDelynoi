@@ -1,6 +1,7 @@
 #ifndef XDELYNOI_XMESH_H
 #define XDELYNOI_XMESH_H
 
+#include <xDelynoi/operations/MeshOperator.h>
 #include <xDelynoi/operations/MeshMerger.h>
 #include <xDelynoi/operations/MeshRefiner.h>
 #include <xDelynoi/models/structures/ContainerInfo.h>
@@ -13,16 +14,14 @@
 #include <xDelynoi/utilities/vector_ops.h>
 #include <xDelynoi/utilities/xdelynoi_utilities.h>
 #include <xDelynoi/models/structures/greater.h>
-#include <xDelynoi/operations/merge/VertexIndexMerger.h>
-#include <xDelynoi/operations/break/reconstructors/PolygonToTriangleReconstructor.h>
-#include <xDelynoi/operations/break/reconstructors/IdentityReconstructor.h>
-#include <xDelynoi/operations/break/reconstructors/ElementReconstructor.h>
 #include <xDelynoi/models/creator/PointCreator.h>
 #include <delynoi/models/generator/PointGenerator.h>
+#include <xDelynoi/config/Config.h>
 
-class MeshBreaker;
+class MeshOperator;
 class MeshRefiner;
-class MeshFixer;
+class MeshBreaker;
+class MeshMerger;
 
 class xMesh : public Mesh<xPolygon>{
 private:
@@ -33,14 +32,12 @@ private:
     MeshBreaker* breaker;
     MeshRefiner* refiner;
 
-    ElementReconstructor* reconstructor;
-
     ContainerInfo processContainerInfo(int poly, Point point);
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
     int replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints);
 public:
-    xMesh(Mesh<Triangle> mesh);
-    xMesh(Mesh<Polygon> mesh);
+    xMesh(Mesh<Triangle> mesh, Config config);
+    xMesh(Mesh<Polygon> mesh, Config config);
 
     xSegmentMap* getSegments();
     xPointMap* getPointMap();

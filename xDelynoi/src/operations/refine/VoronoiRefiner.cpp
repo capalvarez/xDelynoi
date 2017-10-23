@@ -1,6 +1,6 @@
 #include <xDelynoi/operations/refine/VoronoiRefiner.h>
 
-VoronoiRefiner::VoronoiRefiner(xMesh *mesh) : MeshRefiner(mesh) {}
+VoronoiRefiner::VoronoiRefiner() {}
 
 SimpleMesh VoronoiRefiner::computeElements(xPolygon elem, std::vector<Point> toAdd) {
     UniqueList<Point>& points = this->mesh->getPoints();
