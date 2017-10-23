@@ -4,6 +4,7 @@
 #include <xDelynoi/operations/MeshRefiner.h>
 #include <xDelynoi/operations/MeshMerger.h>
 #include <xDelynoi/operations/MeshBreaker.h>
+#include <xDelynoi/models/xMesh.h>
 #include "Configurations.h"
 
 class Config{
@@ -18,7 +19,7 @@ public:
         this->breaker = breaker;
     }
 
-    void setMesh(xMesh* mesh){
+    void setMesh(xMeshElements mesh){
         this->refiner->setMesh(mesh);
         this->merger->setMesh(mesh);
         this->breaker->setMesh(mesh);

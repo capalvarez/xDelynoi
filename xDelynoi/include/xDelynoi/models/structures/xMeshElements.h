@@ -2,6 +2,7 @@
 #define XDELYNOI_XMESHELEMENTS_H
 
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
+#include <xDelynoi/models/xPolygon.h>
 
 struct xMeshElements {
     UniqueList<Point> points ;

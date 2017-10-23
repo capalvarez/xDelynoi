@@ -6,22 +6,22 @@ MeshBreaker::MeshBreaker(ClosingRule *close, ElementReconstructor *reconstructor
     this->constructor = reconstructor;
 }
 
-void MeshBreaker::breakMesh(PointSegment segment) {
+void MeshBreaker::breakMesh(xMesh* mesh, PointSegment segment) {
     this->breakMesh(segment, this->closingRule);
 }
 
-void MeshBreaker::breakMesh(std::vector<PointSegment> segments) {
+void MeshBreaker::breakMesh(xMesh* mesh, std::vector<PointSegment> segments) {
 
 }
 
-void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
+void MeshBreaker::breakMesh(xMesh* mesh, PointSegment segment, ClosingRule *rule) {
     int init, initialPolygon, lastPolygon;
     NeighbourInfo initialInfo;
     std::vector<int> previous;
 
-    UniqueList<Point>& points = mesh.points;
-    std::vector<xPolygon> polygons = mesh.polygons;
-    xSegmentMap* edges = mesh.segments;
+    UniqueList<Point>& points = this->mesh.points;
+    std::vector<xPolygon> polygons = this->mesh.polygons;
+    xSegmentMap* edges = this->mesh.segments;
 
     ContainerInfo initialContainer = mesh->findContainer(segment.getFirst());
 
@@ -119,8 +119,8 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
         n1 = n2;
     }
 
-    closingRule->closePolygon(mesh, segment.getFirst(), initialPolygon, initialInfo);
-    closingRule->closePolygon(mesh, segment.getSecond(), lastPolygon, n1);
+    closingRule->closePolygon(this->mesh, segment.getFirst(), initialPolygon, initialInfo);
+    closingRule->closePolygon(this->mesh, segment.getSecond(), lastPolygon, n1);
 }
 
 void MeshBreaker::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {

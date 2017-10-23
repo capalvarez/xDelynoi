@@ -3,7 +3,7 @@
 TriangulateRefiner::TriangulateRefiner(){}
 
 SimpleMesh TriangulateRefiner::computeElements(xPolygon elem, std::vector<Point> toAdd) {
-    UniqueList<Point>& points = this->mesh->getPoints();
+    UniqueList<Point>& points = this->mesh.points;
 
     Region r (elem, points.getList());
     TriangleDelaunayGenerator generator(r, toAdd);

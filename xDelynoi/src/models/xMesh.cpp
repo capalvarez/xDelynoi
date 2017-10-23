@@ -19,7 +19,7 @@ xMesh::xMesh(Mesh<Triangle> mesh, Config config) {
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
 
-    config.setMesh(this);
+    config.setMesh(this->getElements());
 
     this->merger = config.merger;
     this->refiner = config.refiner;
@@ -40,7 +40,7 @@ xMesh::xMesh(Mesh<Polygon> mesh, Config config) {
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
 
-    config.setMesh(this);
+    config.setMesh(this->getElements());
 
     this->merger = config.merger;
     this->refiner = config.refiner;

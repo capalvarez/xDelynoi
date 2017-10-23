@@ -14,6 +14,7 @@
 #include <xDelynoi/utilities/vector_ops.h>
 
 class MeshFixer;
+class MeshBreaker;
 
 class xMesh : public Mesh<xPolygon>{
 private:
