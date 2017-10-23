@@ -18,6 +18,7 @@
 #include <xDelynoi/operations/break/reconstructors/IdentityReconstructor.h>
 #include <xDelynoi/operations/break/reconstructors/ElementReconstructor.h>
 #include <xDelynoi/models/creator/PointCreator.h>
+#include <delynoi/models/generator/PointGenerator.h>
 
 class MeshBreaker;
 class MeshRefiner;
@@ -36,7 +37,7 @@ private:
 
     ContainerInfo processContainerInfo(int poly, Point point);
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
-    void replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints);
+    int replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints);
 public:
     xMesh(Mesh<Triangle> mesh);
     xMesh(Mesh<Polygon> mesh);

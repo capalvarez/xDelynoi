@@ -6,7 +6,7 @@ std::vector<xPolygon>
 PolygonToTriangleReconstructor::reconstructElement(std::vector<int> points, std::vector<Point> meshPoints) {
     std::vector<xPolygon> polygons;
 
-    EarPointCreator generator;
+    EarTriangulationGenerator generator;
     Polygon p(points, meshPoints);
     std::vector<Triangle> triangulation = generator.triangulate(p, meshPoints);
 

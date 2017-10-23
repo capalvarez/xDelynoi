@@ -34,7 +34,6 @@ xMesh::xMesh(Mesh<Polygon> mesh) {
     this->edges = this->xEdges;
 
     this->merger = new VertexIndexMerger(this);
-    this->closingRule = new StraightLineClosingRule();
     this->reconstructor = new IdentityReconstructor();
 }
 
@@ -77,7 +76,7 @@ void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, i
     this->polygons[last] = p1;
 }
 
-void xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints) {
+int xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints) {
     xPolygon newPolygon (merged, this->points);
 
     std::sort(polys.begin(), polys.end(), greater());
@@ -124,11 +123,13 @@ void xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> p
 
         xpointMap->deleteElement(p);
     }
+
+    return polys.back();
 }
 
 void xMesh::breakMesh(PointSegment segment) {
-    MeshBreaker breaker(this, reconstructor);
-    breaker.breakMesh(segment);
+//MeshBreaker breaker(this, reconstructor);
+//    breaker.breakMesh(segment);
 }
 
 void xMesh::breakMesh(std::vector<PointSegment> segments) {
@@ -347,15 +348,48 @@ int xMesh::getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<i
 void xMesh::refine(Point p) {
     ContainerInfo container = this->findContainer(p);
 
-    if(!container.isInsideDomain()){
+    if(!container.isInsideDomain() || container.inVertex){
         return;
     }
 
+    if (container.isInBoundary) {
+        xPolygon elem = this->getPolygon(container.containers[0]);
+        IndexSegment containerSegment = elem.containerEdge(this->getPoints().getList(), p);
 
+        int index = this->points.push_back(p);
+        elem.insertOnSegment(containerSegment, index);
+    }
+
+    if(container.inEdge) {
+        std::vector<int> merged = this->merger->mergeElements(container.containers);
+        std::vector<std::vector<int>> lists;
+
+        for (int n: container.containers) {
+            lists.push_back(this->getPolygon(n).getPoints());
+        }
+
+        std::vector<int> deleted = vector_ops::difference(vector_ops::mergeVectors(lists), merged);
+        UniqueList<Point> toRefine;
+        for (int i : deleted) {
+            Point toBeDeleted = this->getPoint(i);
+            toRefine.push_back(toBeDeleted);
+        }
+
+        int mergedPolygon = replaceElementsForMerged(merged, container.containers, deleted);
+        toRefine.push_back(p);
+
+        this->refiner->refine(this->getPolygon(mergedPolygon), toRefine.getList());
+        return;
+    }
+
+    xPolygon elem = this->getPolygon(container.containers[0]);
+    this->refiner->refine(elem, {p});
 }
 
 void xMesh::refine(std::vector<Point> p) {
-
+    for (Point point: p){
+        this->refine(point);
+    }
 }
 
 void xMesh::refine(xPolygon poly, PointGenerator generator, int nX, int nY) {
@@ -370,6 +404,7 @@ void xMesh::refine(xPolygon poly, PointGenerator generator, int nX, int nY) {
 
 void xMesh::refine(xPolygon poly, PointCreator *generator) {
     std::vector<Point> generatorPoints = generator->createPoints(poly, this->points);
+    //Check if points are inside the polygon, or they can not be used for refinement
     this->refiner->refine(poly, generatorPoints);
 }
 
