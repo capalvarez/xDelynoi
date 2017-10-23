@@ -42,6 +42,10 @@ struct ContainerInfo {
         isInBoundary = set;
     }
 
+    bool isInsideDomain(){
+        return !containers.empty();
+    }
+
 };
 
 #endif

@@ -17,7 +17,7 @@ private:
 
     void breakMesh(PointSegment segment, ClosingRule* closingRule);
 public:
-    MeshBreaker(xMesh* mesh, ClosingRule* close);
+    MeshBreaker(xMesh *mesh, ClosingRule *close, ElementReconstructor *reconstructor);
     void breakMesh(PointSegment segment);
     void breakMesh(std::vector<PointSegment> segments);
     void breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init);

@@ -1,9 +1,10 @@
 #include <xDelynoi/operations/MeshBreaker.h>
 #include <xDelynoi/operations/break/functions/break_functions.h>
 
-MeshBreaker::MeshBreaker(xMesh *mesh, ClosingRule *close) {
+MeshBreaker::MeshBreaker(xMesh *mesh, ClosingRule *close, ElementReconstructor *reconstructor) {
     this->closingRule = close;
     this->mesh = mesh;
+    this->constructor = reconstructor;
 }
 
 void MeshBreaker::breakMesh(PointSegment segment) {
@@ -122,8 +123,6 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     closingRule->closePolygon(mesh, segment.getFirst(), initialPolygon, initialInfo);
     closingRule->closePolygon(mesh, segment.getSecond(), lastPolygon, n1);
 }
-
-
 
 void MeshBreaker::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
     UniqueList<Point>& points = mesh->getPoints();

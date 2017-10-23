@@ -205,7 +205,7 @@ class TPPLPartition {
             bool IsConvex(const TPPLPoint& p1, const TPPLPoint& p2, const TPPLPoint& p3) const;
         };
         
-        //standard helper functions
+        //standard helper creator
         bool IsConvex(TPPLPoint& p1, TPPLPoint& p2, TPPLPoint& p3);
         bool IsReflex(TPPLPoint& p1, TPPLPoint& p2, TPPLPoint& p3);
         bool IsInside(TPPLPoint& p1, TPPLPoint& p2, TPPLPoint& p3, TPPLPoint &p);
@@ -218,16 +218,16 @@ class TPPLPartition {
         TPPLPoint Normalize(const TPPLPoint &p);
         tppl_float Distance(const TPPLPoint &p1, const TPPLPoint &p2);
         
-        //helper functions for Triangulate_EC
+        //helper creator for Triangulate_EC
         void UpdateVertexReflexity(PartitionVertex *v);
         void UpdateVertex(PartitionVertex *v,PartitionVertex *vertices, long numvertices);
         
-        //helper functions for ConvexPartition_OPT
+        //helper creator for ConvexPartition_OPT
         void UpdateState(long a, long b, long w, long i, long j, DPState2 **dpstates);
         void TypeA(long i, long j, long k, PartitionVertex *vertices, DPState2 **dpstates);
         void TypeB(long i, long j, long k, PartitionVertex *vertices, DPState2 **dpstates);
         
-        //helper functions for MonotonePartition
+        //helper creator for MonotonePartition
         bool Below(TPPLPoint &p1, TPPLPoint &p2);
         void AddDiagonal(MonotoneVertex *vertices, long *numvertices, long index1, long index2,
             char *vertextypes, std::set<ScanLineEdge>::iterator *edgeTreeIterators,

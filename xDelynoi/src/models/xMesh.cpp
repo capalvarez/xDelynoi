@@ -1,11 +1,9 @@
 #include <xDelynoi/models/xMesh.h>
-#include <xDelynoi/utilities/vector_ops.h>
-#include <xDelynoi/utilities/xdelynoi_utilities.h>
-#include <xDelynoi/models/structures/greater.h>
-#include <xDelynoi/operations/merge/VertexIndexMerger.h>
+#include <delynoi/models/generator/PointGenerator.h>
+#include <delynoi/models/Region.h>
 
 xMesh::xMesh(Mesh<Triangle> mesh) {
-    for(Triangle e: mesh.getPolygons()){
+    for(const Triangle e: mesh.getPolygons()){
         xPolygon newElement(e);
 
         this->polygons.push_back(newElement);
@@ -22,7 +20,7 @@ xMesh::xMesh(Mesh<Triangle> mesh) {
 }
 
 xMesh::xMesh(Mesh<Polygon> mesh) {
-    for(Polygon e: mesh.getPolygons()){
+    for(const Polygon e: mesh.getPolygons()){
         xPolygon newElement(e);
 
         this->polygons.push_back(newElement);
@@ -36,6 +34,8 @@ xMesh::xMesh(Mesh<Polygon> mesh) {
     this->edges = this->xEdges;
 
     this->merger = new VertexIndexMerger(this);
+    this->closingRule = new StraightLineClosingRule();
+    this->reconstructor = new IdentityReconstructor();
 }
 
 void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore) {
@@ -127,17 +127,14 @@ void xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> p
 }
 
 void xMesh::breakMesh(PointSegment segment) {
+    MeshBreaker breaker(this, reconstructor);
+    breaker.breakMesh(segment);
+}
 
+void xMesh::breakMesh(std::vector<PointSegment> segments) {
 
 }
 
-void xMesh::breakMesh(PointSegment segment, ClosingRule *closingRule) {
-
-
-
-
-
-}
 
 void xMesh::erase(Point p) {
     int i = utilities::indexOf(this->points.getList(), p);
@@ -348,6 +345,12 @@ int xMesh::getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<i
 }
 
 void xMesh::refine(Point p) {
+    ContainerInfo container = this->findContainer(p);
+
+    if(!container.isInsideDomain()){
+        return;
+    }
+
 
 }
 
@@ -355,7 +358,26 @@ void xMesh::refine(std::vector<Point> p) {
 
 }
 
+void xMesh::refine(xPolygon poly, PointGenerator generator, int nX, int nY) {
+    Region region(poly, this->points.getList());
+    BoundingBox box = region.getBox();
+    std::vector<Point> generatorPoints;
+
+    generator.generate(generatorPoints, box, nX, nY);
+
+    this->refiner->refine(poly, generatorPoints);
+}
+
+void xMesh::refine(xPolygon poly, PointCreator *generator) {
+    std::vector<Point> generatorPoints = generator->createPoints(poly, this->points);
+    this->refiner->refine(poly, generatorPoints);
+}
+
 ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
+    if(poly<0){
+        return ContainerInfo();
+    }
+
     xPolygon polygon = getPolygon(poly);
     bool inBoundary = false;
 

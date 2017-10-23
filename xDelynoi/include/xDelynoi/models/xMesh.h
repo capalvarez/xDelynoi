@@ -2,6 +2,7 @@
 #define XDELYNOI_XMESH_H
 
 #include <xDelynoi/operations/MeshMerger.h>
+#include <xDelynoi/operations/MeshRefiner.h>
 #include <xDelynoi/models/structures/ContainerInfo.h>
 #include <xDelynoi/models/structures/NeighbourInfo.h>
 #include "xPolygon.h"
@@ -9,12 +10,18 @@
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
 #include <xDelynoi/operations/MeshBreaker.h>
 #include <xDelynoi/operations/MeshFixer.h>
+#include <xDelynoi/utilities/vector_ops.h>
+#include <xDelynoi/utilities/xdelynoi_utilities.h>
+#include <xDelynoi/models/structures/greater.h>
+#include <xDelynoi/operations/merge/VertexIndexMerger.h>
+#include <xDelynoi/operations/break/reconstructors/PolygonToTriangleReconstructor.h>
+#include <xDelynoi/operations/break/reconstructors/IdentityReconstructor.h>
+#include <xDelynoi/operations/break/reconstructors/ElementReconstructor.h>
+#include <xDelynoi/models/creator/PointCreator.h>
 
 class MeshBreaker;
 class MeshRefiner;
 class MeshFixer;
-class ClosingRule;
-
 
 class xMesh : public Mesh<xPolygon>{
 private:
@@ -22,8 +29,10 @@ private:
     xPointMap* xpointMap;
 
     MeshMerger* merger;
-    MeshRefiner* refiner;
     MeshBreaker* breaker;
+    MeshRefiner* refiner;
+
+    ElementReconstructor* reconstructor;
 
     ContainerInfo processContainerInfo(int poly, Point point);
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
@@ -50,7 +59,7 @@ public:
     bool isEndPoint(IndexSegment segment, Point point);
 
     void breakMesh(PointSegment segment);
-    void breakMesh(PointSegment segment, ClosingRule* closingRule);
+    void breakMesh(std::vector<PointSegment> segments);
 
     void erase(Point p);
     void erase(xPolygon elem);
@@ -68,6 +77,8 @@ public:
 
     void refine(Point p);
     void refine(std::vector<Point> p);
+    void refine(xPolygon poly, PointGenerator generator, int nX, int nY);
+    void refine(xPolygon poly, PointCreator* generator);
 };
 
 #endif
