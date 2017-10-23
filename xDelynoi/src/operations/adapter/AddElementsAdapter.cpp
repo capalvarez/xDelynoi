@@ -1,5 +1,5 @@
 #include <xDelynoi/operations/adapter/AddElementsAdapter.h>
-#include <xDelynoi/models/basic/xIndexSegment.h>
+
 
 std::unordered_map<int, int> AddElementsAdapter::includeNewPoints(UniqueList<Point> &meshPoints, std::vector<Point> points) {
     std::unordered_map<int,int> pointMap;
@@ -12,18 +12,18 @@ std::unordered_map<int, int> AddElementsAdapter::includeNewPoints(UniqueList<Poi
     return pointMap;
 }
 
-void AddElementsAdapter::includeNewElements(xMesh *mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex) {
+void AddElementsAdapter::includeNewElements(xMeshElements& mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex) {
     std::unordered_map<int,std::unordered_map<IndexSegment,std::vector<IndexSegment>,SegmentHasher>> changesInNeighbours;
 
-    UniqueList<Point>& meshPoints = mesh->getPoints();
-    std::vector<xPolygon>& meshElements = mesh->getPolygons();
-    SegmentMap* segments = mesh->getSegments();
+    UniqueList<Point>& meshPoints = mesh.points;
+    std::vector<xPolygon>& meshElements = mesh.polygons;
+    SegmentMap* segments = mesh.segments;
 
     std::vector<Polygon> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
 
     std::vector<IndexSegment> containerSegments;
-    mesh->getPolygon(originalIndex).getSegments(containerSegments);
+    meshElements[originalIndex].getSegments(containerSegments);
 
     std::map<Angle,std::vector<IndexSegment>> containerSegmentsMap;
 

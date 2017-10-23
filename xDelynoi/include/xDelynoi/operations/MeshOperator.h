@@ -1,15 +1,14 @@
 #ifndef XDELYNOI_MESHOPERATOR_H
 #define XDELYNOI_MESHOPERATOR_H
 
-#include <xDelynoi/models/xMesh.h>
-
-class xMesh;
+#include <xDelynoi/models/structures/xMeshElements.h>
 
 class MeshOperator{
 protected:
-    xMesh* mesh;
+    xMeshElements mesh;
 public:
-    void setMesh(xMesh* mesh);
+    MeshOperator();
+    void setMesh(xMeshElements& mesh);
 };
 
 #endif

@@ -1,18 +1,17 @@
 #include <xDelynoi/operations/break/closingrules/TriangulateClosingRule.h>
-#include <xDelynoi/operations/refine/structures/SimpleMesh.h>
-#include <xDelynoi/operations/adapter/AddElementsAdapter.h>
 
-void TriangulateClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, NeighbourInfo info) {
-    UniqueList<Point>& points = mesh->getPoints();
+
+void TriangulateClosingRule::closePolygon(xMeshElements& mesh, Point p, int polygon, NeighbourInfo info) {
+    UniqueList<Point>& points = mesh.points;
     int index;
 
     if(info.edge.isInCorner(p, points.getList(), index)){
         return;
     }
 
-    xPointMap* pointMap = mesh->getPointMap();
-    xSegmentMap* segmentMap = mesh->getSegments();
-    xPolygon poly = mesh->getPolygon(polygon);
+    xPointMap* pointMap = mesh.pointMap;
+    xSegmentMap* segmentMap = mesh.segments;
+    xPolygon poly = mesh.polygons[polygon];
 
     int pIndex = points.push_back(p);
     int p1Index = points.push_back(info.intersection);

@@ -1,5 +1,7 @@
 #include <xDelynoi/operations/MeshOperator.h>
 
-void MeshOperator::setMesh(xMesh *mesh) {
+MeshOperator::MeshOperator() {}
+
+void MeshOperator::setMesh(xMeshElements &mesh) {
     this->mesh = mesh;
 }

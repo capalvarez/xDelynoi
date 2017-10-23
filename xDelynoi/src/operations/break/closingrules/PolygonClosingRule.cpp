@@ -1,16 +1,16 @@
 #include <xDelynoi/operations/break/closingrules/PolygonClosingRule.h>
 #include <xDelynoi/operations/break/functions/break_functions.h>
-#include <xDelynoi/operations/break/reconstructors/IdentityReconstructor.h>
 
-void PolygonClosingRule::closePolygon(xMesh *mesh, Point p, int polygon, NeighbourInfo info) {
-    UniqueList<Point>& points = mesh->getPoints();
+
+void PolygonClosingRule::closePolygon(xMeshElements& mesh, Point p, int polygon, NeighbourInfo info) {
+    UniqueList<Point>& points = mesh.points;
 
     if(info.edge.contains(points.getList(), p)){
         return;
     }
 
-    xSegmentMap* segmentMap = mesh->getSegments();
-    xPolygon poly = mesh->getPolygon(polygon);
+    xSegmentMap* segmentMap = mesh.segments;
+    xPolygon poly = mesh.polygons[polygon];
 
     std::vector<IndexSegment> segments;
     poly.getSegments(segments);

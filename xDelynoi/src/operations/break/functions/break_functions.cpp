@@ -1,20 +1,21 @@
 #include <xDelynoi/operations/break/functions/break_functions.h>
 
 namespace break_functions{
-    void partitionPolygonFromSegment(xMesh* mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
+    void partitionPolygonFromSegment(xMeshElements mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
                                      std::vector<int>& new2, int p1, int p2, int init){
-        UniqueList<Point>& points = mesh->getPoints();
-        xSegmentMap* edges = mesh->getSegments();
-        xPointMap* pointMap = mesh->getPointMap();
+        UniqueList<Point>& points = mesh.points;
+        xSegmentMap* edges = mesh.segments;
+        xPointMap* pointMap = mesh.pointMap;
+        std::vector<xPolygon>& polygons = mesh.polygons;
 
         UniqueList<int> newPoints;
         std::vector<int> newElements = break_functions::computeNewPolygons(mesh, constructor, n1, n2, poly1, new1, new2, p1, p2);
 
         if(init>=0){
-            mesh->getPolygon(init).insertOnSegment(n1.edge, p1);
+            polygons[init].insertOnSegment(n1.edge, p1);
         }
 
-        mesh->getPolygon(n2.neighbour).insertOnSegment(n2.edge, p2);
+        polygons[n2.neighbour].insertOnSegment(n2.edge, p2);
 
         // Get the edge information for the old polygon and update it
         if(!n1.isVertex){
@@ -29,7 +30,7 @@ namespace break_functions{
         pointMap->insert(points[p2], {n2.neighbour, n1.neighbour, n1.neighbour});
 
         for(int newElem: newElements){
-            xPolygon elem = mesh->getPolygon(newElem);
+            xPolygon elem = polygons[newElem];
             std::vector<IndexSegment> segments;
             elem.getSegments(segments);
             std::vector<int> elemPoints = elem.getPoints();
@@ -39,7 +40,7 @@ namespace break_functions{
             }
 
             for (int j = 0; j < elemPoints.size(); ++j) {
-                pointMap->replaceNeighbour(mesh->getPoint(elemPoints[j]), n1.neighbour, newElem);
+                pointMap->replaceNeighbour(points[elemPoints[j]], n1.neighbour, newElem);
             }
         }
 
@@ -56,10 +57,10 @@ namespace break_functions{
         n2.extraPoint = p2;
     }
 
-    std::vector<int> computeNewPolygons(xMesh* mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo &n2,
+    std::vector<int> computeNewPolygons(xMeshElements mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo &n2,
                                         xPolygon poly1, std::vector<int> &new1, std::vector<int> &new2, int p1, int p2) {
-        UniqueList<Point> &points = mesh->getPoints();
-        std::vector<xPolygon>& polygons = mesh->getPolygons();
+        UniqueList<Point> &points = mesh.points;
+        std::vector<xPolygon>& polygons = mesh.polygons;
 
         std::vector<int> poly1_points = poly1.getPoints();
 

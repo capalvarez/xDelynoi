@@ -19,9 +19,9 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     NeighbourInfo initialInfo;
     std::vector<int> previous;
 
-    UniqueList<Point>& points = mesh->getPoints();
-    std::vector<xPolygon> polygons = mesh->getPolygons();
-    xSegmentMap* edges = mesh->getSegments();
+    UniqueList<Point>& points = mesh.points;
+    std::vector<xPolygon> polygons = mesh.polygons;
+    xSegmentMap* edges = mesh.segments;
 
     ContainerInfo initialContainer = mesh->findContainer(segment.getFirst());
 
@@ -30,7 +30,7 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     }
 
     if(initialContainer.inEdge){
-        xPolygon p1 = mesh->getPolygon(initialContainer.containers[0]);
+        xPolygon p1 = polygons[initialContainer.containers[0]];
         initialPolygon = p1.numberOfInteresectedSegments(segment, points.getList())>1? initialContainer.containers[1] :
                          initialContainer.containers[0];
     }
@@ -53,7 +53,7 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
 
     //If the initial point lies in the boundary, still include an extra point in the mesh
     if(initialContainer.isInBoundary){
-        IndexSegment container_edge = mesh->getPolygon(initialContainer.containers[0]).containerEdge(points.getList(),
+        IndexSegment container_edge = polygons[initialContainer.containers[0]].containerEdge(points.getList(),
                                                                                                       segment.getFirst());
 
         if(!mesh->isEndPoint(container_edge, segment.getFirst())){
@@ -68,7 +68,7 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
     init = initialPolygon;
 
     while(true){
-        xPolygon poly1 = mesh->getPolygon(n1.neighbour);
+        xPolygon poly1 = polygons[n1.neighbour];
 
         if(poly1.containsPoint(points.getList(), segment.getSecond())){
             if(poly1.inEdges(points.getList(), segment.getSecond())){
@@ -124,9 +124,10 @@ void MeshBreaker::breakMesh(PointSegment segment, ClosingRule *rule) {
 }
 
 void MeshBreaker::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
-    UniqueList<Point>& points = mesh->getPoints();
+    UniqueList<Point>& points = mesh.points;
+    std::vector<xPolygon>& polygons = mesh.polygons;
 
-    xPolygon poly1 = mesh->getPolygon(n1.neighbour);
+    xPolygon poly1 = polygons[n1.neighbour];
     std::vector<int> poly1_points = poly1.getPoints();
 
     //Include new points on the mesh

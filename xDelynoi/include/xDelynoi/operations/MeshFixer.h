@@ -3,8 +3,6 @@
 
 #include <xDelynoi/models/xMesh.h>
 
-class xMesh;
-
 class MeshFixer{
 public:
     virtual void fixMesh()=0;

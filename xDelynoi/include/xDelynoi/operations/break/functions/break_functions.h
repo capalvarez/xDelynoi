@@ -6,9 +6,9 @@
 #include <xDelynoi/operations/break/reconstructors/ElementReconstructor.h>
 
 namespace break_functions{
-    extern void partitionPolygonFromSegment(xMesh* mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
+    extern void partitionPolygonFromSegment(xMeshElements mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
                                      std::vector<int>& new2, int p1, int p2, int init);
-    extern std::vector<int> computeNewPolygons(xMesh* mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo &n2, xPolygon poly1, std::vector<int> &new1,
+    extern std::vector<int> computeNewPolygons(xMeshElements mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo &n2, xPolygon poly1, std::vector<int> &new1,
                                                std::vector<int> &new2, int p1, int p2);
 }
 

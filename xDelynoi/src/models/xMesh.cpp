@@ -1,6 +1,9 @@
 #include <xDelynoi/models/xMesh.h>
 #include <delynoi/models/generator/PointGenerator.h>
 #include <delynoi/models/Region.h>
+#include <xDelynoi/utilities/xdelynoi_utilities.h>
+#include <xDelynoi/models/structures/greater.h>
+
 
 xMesh::xMesh(Mesh<Triangle> mesh, Config config) {
     for(const Triangle e: mesh.getPolygons()){
@@ -485,4 +488,8 @@ xSegmentMap *xMesh::getSegments() {
 
 xPointMap *xMesh::getPointMap() {
     return this->xpointMap;
+}
+
+xMeshElements xMesh::getElements() {
+    return xMeshElements(this->points, this->polygons, this->xEdges, this->xpointMap);
 }

@@ -1,10 +1,10 @@
 #ifndef XDELYNOI_MESHBREAKER_H
 #define XDELYNOI_MESHBREAKER_H
 
-#include "MeshOperator.h"
 #include <xDelynoi/operations/break/closingrules/ClosingRule.h>
 #include <xDelynoi/operations/break/reconstructors/ElementReconstructor.h>
-
+#include <xDelynoi/models/structures/NeighbourInfo.h>
+#include "MeshOperator.h"
 
 class MeshBreaker: public MeshOperator{
 private:

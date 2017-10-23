@@ -1,27 +1,19 @@
 #ifndef XDELYNOI_XMESH_H
 #define XDELYNOI_XMESH_H
 
-#include <xDelynoi/operations/MeshOperator.h>
-#include <xDelynoi/operations/MeshMerger.h>
-#include <xDelynoi/operations/MeshRefiner.h>
-#include <xDelynoi/models/structures/ContainerInfo.h>
-#include <xDelynoi/models/structures/NeighbourInfo.h>
-#include "xPolygon.h"
 #include <delynoi/models/Mesh.h>
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
+#include <xDelynoi/operations/MeshMerger.h>
 #include <xDelynoi/operations/MeshBreaker.h>
-#include <xDelynoi/operations/MeshFixer.h>
-#include <xDelynoi/utilities/vector_ops.h>
-#include <xDelynoi/utilities/xdelynoi_utilities.h>
-#include <xDelynoi/models/structures/greater.h>
-#include <xDelynoi/models/creator/PointCreator.h>
-#include <delynoi/models/generator/PointGenerator.h>
+#include <xDelynoi/operations/MeshRefiner.h>
+#include <xDelynoi/models/structures/ContainerInfo.h>
 #include <xDelynoi/config/Config.h>
+#include <xDelynoi/operations/MeshFixer.h>
+#include <xDelynoi/models/creator/PointCreator.h>
+#include "xPolygon.h"
+#include <xDelynoi/utilities/vector_ops.h>
 
-class MeshOperator;
-class MeshRefiner;
-class MeshBreaker;
-class MeshMerger;
+class MeshFixer;
 
 class xMesh : public Mesh<xPolygon>{
 private:
@@ -77,6 +69,8 @@ public:
     void refine(std::vector<Point> p);
     void refine(xPolygon poly, PointGenerator generator, int nX, int nY);
     void refine(xPolygon poly, PointCreator* generator);
+
+    xMeshElements getElements();
 };
 
 #endif

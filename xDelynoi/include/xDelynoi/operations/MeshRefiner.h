@@ -6,6 +6,7 @@
 #include <delynoi/voronoi/TriangleDelaunayGenerator.h>
 #include <xDelynoi/operations/adapter/AddElementsAdapter.h>
 #include <xDelynoi/operations/refine/structures/SimpleMesh.h>
+#include "MeshOperator.h"
 
 class MeshRefiner : public MeshOperator{
 public:
