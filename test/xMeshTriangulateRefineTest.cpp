@@ -2,6 +2,7 @@
 #include <delynoi/models/Region.h>
 #include <delynoi/voronoi/TriangleVoronoiGenerator.h>
 #include <xDelynoi/models/xMesh.h>
+#include <xDelynoi/models/creator/CentroidPointCreator.h>
 
 void refineWithPoint(xMesh mesh) {
     mesh.refine(Point(5,5));
@@ -9,11 +10,12 @@ void refineWithPoint(xMesh mesh) {
 }
 
 void refineWithPointCreator(xMesh mesh) {
-
+    mesh.refine(mesh.getPolygon(3), new CentroidPointCreator);
+    mesh.printInFile("refinedWithCreator.txt");
 }
 
 void refineWithPointGenerator(xMesh mesh) {
-    mesh.refine(mesh.getPolygon(6), PointGenerator(functions::constant(), functions::constant()), 2, 2);
+    mesh.refine(mesh.getPolygon(6), PointGenerator(functions::constant(), functions::constant()), 3, 3);
     mesh.printInFile("refinedWithGenerator.txt");
 }
 
@@ -26,9 +28,9 @@ int main(){
     TriangleVoronoiGenerator g(seeds, square);
     Mesh<Polygon> m = g.getMesh();
 
-    xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
+    xMesh destructable(m, Config(Configurations::config::PolygonalTriangulateRefine));
     destructable.printInFile("destructible.txt");
 
-
+    refineWithPoint(destructable);
 }
 

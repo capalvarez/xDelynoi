@@ -4,7 +4,7 @@ Point ClosestVertexClosingRule::getClosingPoint(IndexSegment segment, UniqueList
     double distance1 = PointSegment(intersection, points[segment.getFirst()]).length();
     double distance2 = PointSegment(intersection, points[segment.getSecond()]).length();
 
-    if (distance1 >= distance2){
+    if (distance1 <= distance2){
         return points[segment.getFirst()];
     } else {
         return points[segment.getSecond()];

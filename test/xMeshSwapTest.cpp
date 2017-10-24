@@ -11,7 +11,7 @@ int main(){
     TriangleVoronoiGenerator g(seeds, square);
     Mesh<Polygon> m = g.getMesh();
 
-    xMesh destructable(m);
+    xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
     destructable.printInFile("destructible.txt");
 
     destructable.swapPoints(destructable.getPoint(8), destructable.getPoint(3));

@@ -244,6 +244,7 @@ void xMesh::breakMesh(PointSegment segment) {
     bool oneLastIteration = false;
     init = initialPolygon;
 
+    int i = 0;
     while(true){
         xPolygon poly1 = polygons[n1.neighbour];
 
@@ -294,11 +295,16 @@ void xMesh::breakMesh(PointSegment segment) {
         last = polygons.size()-1;
         init = n1.neighbour;
         n1 = n2;
+
+        std::string step = "step" + utilities::toString(i) + ".txt";
+        this->printInFile(step);
+        i++;
     }
 
     xMeshElements* elements = this->getElements();
 
     closingRule->closePolygon(elements, segment.getFirst(), initialPolygon, initialInfo);
+    this->printInFile("afterFirst.txt");
     closingRule->closePolygon(elements, segment.getSecond(), lastPolygon, n1);
 }
 

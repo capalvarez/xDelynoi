@@ -59,17 +59,17 @@ namespace break_functions{
 
     std::vector<int> computeNewPolygons(xMeshElements* mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo &n2,
                                         xPolygon poly1, std::vector<int> &new1, std::vector<int> &new2, int p1, int p2) {
-        UniqueList<Point> points = *mesh->points;
-        std::vector<xPolygon> polygons = *mesh->polygons;
+        UniqueList<Point>* points = mesh->points;
+        std::vector<xPolygon>* polygons = mesh->polygons;
 
         std::vector<int> poly1_points = poly1.getPoints();
 
-        n1.orderCCW(points.getList(), poly1.getCentroid());
-        n2.orderCCW(points.getList(), poly1.getCentroid());
+        n1.orderCCW(points->getList(), poly1.getCentroid());
+        n2.orderCCW(points->getList(), poly1.getCentroid());
 
         int indexOfStart, point;
 
-        if (delynoi_utilities::orientation(points[p1], points[p2], points[n2.edge.getFirst()]) >= 0) {
+        if (delynoi_utilities::orientation(points->operator[](p1), points->operator[](p2), points->operator[](n2.edge.getFirst())) >= 0) {
             indexOfStart = utilities::indexOf(poly1_points, n2.edge.getFirst());
             point = n2.edge.getFirst();
         } else {
@@ -129,18 +129,18 @@ namespace break_functions{
             indexOfStart++;
         }
 
-        std::vector<xPolygon> newPolygons1 = constructor->reconstructElement(new1, points.getList());
-        std::vector<xPolygon> newPolygons2 = constructor->reconstructElement(new2, points.getList());
+        std::vector<xPolygon> newPolygons1 = constructor->reconstructElement(new1, points->getList());
+        std::vector<xPolygon> newPolygons2 = constructor->reconstructElement(new2, points->getList());
 
         newPolygons1.insert(newPolygons1.end(), newPolygons2.begin(), newPolygons2.end());
 
         std::vector<int> newIndexes;
         newIndexes.push_back(n1.neighbour);
-        polygons[n1.neighbour] = newPolygons1[0];
+        polygons->operator[](n1.neighbour) = newPolygons1[0];
 
         for (int i = 1; i < newPolygons1.size(); ++i) {
-            polygons.push_back(newPolygons1[i]);
-            newIndexes.push_back(polygons.size() - 1);
+            polygons->push_back(newPolygons1[i]);
+            newIndexes.push_back(polygons->size() - 1);
         }
 
         return newIndexes;

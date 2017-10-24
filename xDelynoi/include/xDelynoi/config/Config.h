@@ -30,7 +30,8 @@ public:
 
         this->refiner = info.refiner;
         this->merger = info.merger;
-
+        this->reconstructor = info.reconstructor;
+        this->closingRule = info.closingRule;
     }
 };
 

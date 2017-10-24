@@ -31,6 +31,6 @@ int main(){
     xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
     destructable.printInFile("destructible.txt");
 
-    refineWithPoint(destructable);
+    refineWithPointGenerator(destructable);
 }
 
