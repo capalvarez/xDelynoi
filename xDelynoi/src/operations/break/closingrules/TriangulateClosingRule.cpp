@@ -2,7 +2,7 @@
 
 
 void TriangulateClosingRule::closePolygon(xMeshElements& mesh, Point p, int polygon, NeighbourInfo info) {
-    UniqueList<Point>& points = mesh.points;
+    UniqueList<Point> points = *mesh.points;
     int index;
 
     if(info.edge.isInCorner(p, points.getList(), index)){
@@ -11,7 +11,7 @@ void TriangulateClosingRule::closePolygon(xMeshElements& mesh, Point p, int poly
 
     xPointMap* pointMap = mesh.pointMap;
     xSegmentMap* segmentMap = mesh.segments;
-    xPolygon poly = mesh.polygons[polygon];
+    xPolygon poly = mesh.polygons->at(polygon);
 
     int pIndex = points.push_back(p);
     int p1Index = points.push_back(info.intersection);

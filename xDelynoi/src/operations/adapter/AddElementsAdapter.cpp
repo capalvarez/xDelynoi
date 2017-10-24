@@ -15,20 +15,20 @@ std::unordered_map<int, int> AddElementsAdapter::includeNewPoints(UniqueList<Poi
 void AddElementsAdapter::includeNewElements(xMeshElements& mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex) {
     std::unordered_map<int,std::unordered_map<IndexSegment,std::vector<IndexSegment>,SegmentHasher>> changesInNeighbours;
 
-    UniqueList<Point>& meshPoints = mesh.points;
-    std::vector<xPolygon>& meshElements = mesh.polygons;
+    UniqueList<Point>* meshPoints = mesh.points;
+    std::vector<xPolygon>* meshElements = mesh.polygons;
     SegmentMap* segments = mesh.segments;
 
     std::vector<Polygon> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
 
     std::vector<IndexSegment> containerSegments;
-    meshElements[originalIndex].getSegments(containerSegments);
+    meshElements->at(originalIndex).getSegments(containerSegments);
 
     std::map<Angle,std::vector<IndexSegment>> containerSegmentsMap;
 
     for (IndexSegment s: containerSegments) {
-        Angle angle = s.cartesianAngle(meshPoints.getList());
+        Angle angle = s.cartesianAngle(meshPoints->getList());
 
         std::vector<IndexSegment>& v = containerSegmentsMap[angle];
         v.push_back(s);
@@ -45,15 +45,15 @@ void AddElementsAdapter::includeNewElements(xMeshElements& mesh, SimpleMesh toIn
             newPolygonPoints.push_back(newPoint);
         }
 
-        xPolygon newPolygon(newPolygonPoints, meshPoints);
+        xPolygon newPolygon(newPolygonPoints, *meshPoints);
         int index;
 
         if(i<1){
-            meshElements[originalIndex] = newPolygon;
+            meshElements->at(originalIndex) = newPolygon;
             index = originalIndex;
         }else{
-            meshElements.push_back(newPolygon);
-            index = meshElements.size() - 1;
+            meshElements->push_back(newPolygon);
+            index = meshElements->size() - 1;
         }
 
         for (int j = 0; j < n; ++j) {
@@ -62,11 +62,11 @@ void AddElementsAdapter::includeNewElements(xMeshElements& mesh, SimpleMesh toIn
             xIndexSegment originalEdge(oldPoints[j],oldPoints[(j+1)%n]);
 
             if(originalEdge.isSegmentInBoundary( newPoints)){
-                Angle a = edge.cartesianAngle(meshPoints.getList());
+                Angle a = edge.cartesianAngle(meshPoints->getList());
                 std::vector<IndexSegment> containerCandidates = containerSegmentsMap[a];
 
                 for (int k = 0; k < containerCandidates.size(); ++k) {
-                    if(containerCandidates[k].contains(meshPoints.getList(),edge)){
+                    if(containerCandidates[k].contains(meshPoints->getList(),edge)){
                         NeighboursBySegment neighbours = segments->get(containerCandidates[k]);
 
                         bool is_first = neighbours.getFirst() == originalIndex;
@@ -97,10 +97,10 @@ void AddElementsAdapter::includeNewElements(xMeshElements& mesh, SimpleMesh toIn
         if(value.first<0)
             continue;
 
-        xPolygon poly = meshElements[value.first];
+        xPolygon poly = meshElements->at(value.first);
 
         for(auto s: value.second){
-            poly.replaceSegment(s.first, s.second, meshPoints.getList());
+            poly.replaceSegment(s.first, s.second, meshPoints->getList());
         }
     }
 }

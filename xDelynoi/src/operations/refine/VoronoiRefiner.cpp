@@ -3,9 +3,9 @@
 VoronoiRefiner::VoronoiRefiner() {}
 
 SimpleMesh VoronoiRefiner::computeElements(xPolygon elem, std::vector<Point> toAdd) {
-    UniqueList<Point>& points = this->mesh.points;
+    UniqueList<Point>* points = this->mesh.points;
 
-    Region region(elem, points.getList());
+    Region region(elem, points->getList());
     TriangleVoronoiGenerator voronoiGenerator(toAdd, region);
     Mesh<Polygon> voronoi = voronoiGenerator.getMesh();
 

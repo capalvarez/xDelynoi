@@ -19,7 +19,7 @@ int main(){
     TriangleVoronoiGenerator g(seeds, unicorn);
     Mesh<Polygon> m = g.getMesh();
 
-    xMesh destructable(m);
+    xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
     destructable.printInFile("destructible.txt");
 
     MeshFixer* convexFixer = new ConvexFixer(&destructable);

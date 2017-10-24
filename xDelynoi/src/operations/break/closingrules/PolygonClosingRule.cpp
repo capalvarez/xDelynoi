@@ -3,14 +3,14 @@
 
 
 void PolygonClosingRule::closePolygon(xMeshElements& mesh, Point p, int polygon, NeighbourInfo info) {
-    UniqueList<Point>& points = mesh.points;
+    UniqueList<Point> points = *mesh.points;
 
     if(info.edge.contains(points.getList(), p)){
         return;
     }
 
     xSegmentMap* segmentMap = mesh.segments;
-    xPolygon poly = mesh.polygons[polygon];
+    xPolygon poly = mesh.polygons->at(polygon);
 
     std::vector<IndexSegment> segments;
     poly.getSegments(segments);

@@ -11,7 +11,7 @@ ConvexFixer::~ConvexFixer() {
 }
 
 void ConvexFixer::fixMesh() {
-    std::vector<xPolygon> elements = mesh->getPolygons();
+    std::vector<xPolygon>& elements = mesh->getPolygons();
     UniqueList<Point>& points = mesh->getPoints();
 
     for(xPolygon e : elements){

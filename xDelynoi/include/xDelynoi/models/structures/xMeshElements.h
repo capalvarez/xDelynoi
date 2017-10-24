@@ -5,14 +5,14 @@
 #include <xDelynoi/models/xPolygon.h>
 
 struct xMeshElements {
-    UniqueList<Point> points ;
-    std::vector<xPolygon> polygons;
+    UniqueList<Point>* points ;
+    std::vector<xPolygon>* polygons;
     xSegmentMap *segments;
     xPointMap *pointMap;
 
     xMeshElements(UniqueList<Point> &p, std::vector<xPolygon> &poly, xSegmentMap *seg, xPointMap *pM){
-        points = p;
-        polygons = poly;
+        points = &p;
+        polygons = &poly;
         segments = seg;
         pointMap = pM;
     }
