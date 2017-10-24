@@ -20,7 +20,7 @@ public:
         this->closingRule = closingRule;
     }
 
-    void setMesh(xMeshElements mesh){
+    void setMesh(xMeshElements*& mesh){
         this->refiner->setMesh(mesh);
         this->merger->setMesh(mesh);
     }

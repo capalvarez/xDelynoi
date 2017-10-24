@@ -24,16 +24,24 @@ private:
     ElementReconstructor* reconstructor;
     ClosingRule* closingRule;
 
+    xMeshElements* elements;
+
     ContainerInfo processContainerInfo(int poly, Point point);
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
     int replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints);
     void breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init);
+    UniqueList<Point>* getPointsPointer();
+    std::vector<xPolygon>* getPolygonsPointer();
 public:
     xMesh(Mesh<Triangle> mesh, Config config);
     xMesh(Mesh<Polygon> mesh, Config config);
+    xMesh(const xMesh& m);
 
     xSegmentMap* getSegments();
+    xSegmentMap* getSegments() const;
+
     xPointMap* getPointMap();
+    xPointMap* getPointMap() const;
 
     ContainerInfo findContainer(Point p);
     ContainerInfo findContainer(Point p, int startElement);
@@ -71,7 +79,7 @@ public:
     void refine(xPolygon poly, PointGenerator generator, int nX, int nY);
     void refine(xPolygon poly, PointCreator* generator);
 
-    xMeshElements getElements();
+    xMeshElements* getElements();
 };
 
 #endif

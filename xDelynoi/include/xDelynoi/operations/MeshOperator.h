@@ -5,10 +5,10 @@
 
 class MeshOperator{
 protected:
-    xMeshElements mesh;
+    xMeshElements* mesh;
 public:
     MeshOperator();
-    void setMesh(xMeshElements& mesh);
+    void setMesh(xMeshElements*& mesh);
 };
 
 #endif

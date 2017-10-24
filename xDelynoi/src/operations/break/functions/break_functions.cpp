@@ -1,12 +1,12 @@
 #include <xDelynoi/operations/break/functions/break_functions.h>
 
 namespace break_functions{
-    void partitionPolygonFromSegment(xMeshElements mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
+    void partitionPolygonFromSegment(xMeshElements* mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo& n2, xPolygon poly1, std::vector<int>& new1,
                                      std::vector<int>& new2, int p1, int p2, int init){
-        UniqueList<Point> points = *mesh.points;
-        xSegmentMap* edges = mesh.segments;
-        xPointMap* pointMap = mesh.pointMap;
-        std::vector<xPolygon> polygons = *mesh.polygons;
+        UniqueList<Point> points = *mesh->points;
+        xSegmentMap* edges = mesh->segments;
+        xPointMap* pointMap = mesh->pointMap;
+        std::vector<xPolygon> polygons = *mesh->polygons;
 
         UniqueList<int> newPoints;
         std::vector<int> newElements = break_functions::computeNewPolygons(mesh, constructor, n1, n2, poly1, new1, new2, p1, p2);
@@ -57,10 +57,10 @@ namespace break_functions{
         n2.extraPoint = p2;
     }
 
-    std::vector<int> computeNewPolygons(xMeshElements mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo &n2,
+    std::vector<int> computeNewPolygons(xMeshElements* mesh, ElementReconstructor* constructor, NeighbourInfo n1, NeighbourInfo &n2,
                                         xPolygon poly1, std::vector<int> &new1, std::vector<int> &new2, int p1, int p2) {
-        UniqueList<Point> points = *mesh.points;
-        std::vector<xPolygon> polygons = *mesh.polygons;
+        UniqueList<Point> points = *mesh->points;
+        std::vector<xPolygon> polygons = *mesh->polygons;
 
         std::vector<int> poly1_points = poly1.getPoints();
 

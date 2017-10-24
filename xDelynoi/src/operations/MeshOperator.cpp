@@ -2,6 +2,6 @@
 
 MeshOperator::MeshOperator() {}
 
-void MeshOperator::setMesh(xMeshElements &mesh) {
+void MeshOperator::setMesh(xMeshElements*& mesh) {
     this->mesh = mesh;
 }

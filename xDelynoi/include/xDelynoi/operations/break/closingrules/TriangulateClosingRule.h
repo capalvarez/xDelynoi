@@ -10,7 +10,7 @@
 
 class TriangulateClosingRule : public ClosingRule {
 public:
-    void closePolygon(xMeshElements& mesh, Point p, int polygon, NeighbourInfo info);
+    void closePolygon(xMeshElements* mesh, Point p, int polygon, NeighbourInfo info);
 };
 
 #endif

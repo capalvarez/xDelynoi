@@ -38,6 +38,5 @@ void ConvexFixer::fixNonConvex(xPolygon elem) {
     SimpleMesh simpleMesh = partitioner->partition(elem);
 
     std::unordered_map<int,int> pointMap = AddElementsAdapter::includeNewPoints(points, simpleMesh.getPoints());
-    xMeshElements elements = this->mesh->getElements();
-    AddElementsAdapter::includeNewElements(elements, simpleMesh, pointMap, elemIndex);
+    AddElementsAdapter::includeNewElements(this->mesh->getElements(), simpleMesh, pointMap, elemIndex);
 }

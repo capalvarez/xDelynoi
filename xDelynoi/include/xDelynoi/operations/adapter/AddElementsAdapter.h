@@ -13,7 +13,7 @@
 class AddElementsAdapter {
 public:
     static std::unordered_map<int, int> includeNewPoints(UniqueList<Point> &meshPoints, std::vector<Point> points);
-    static void includeNewElements(xMeshElements& mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex);
+    static void includeNewElements(xMeshElements* mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex);
 };
 
 #endif

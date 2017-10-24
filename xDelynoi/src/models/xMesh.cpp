@@ -20,7 +20,9 @@ xMesh::xMesh(Mesh<Triangle> mesh, Config config) {
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
 
-    config.setMesh(this->getElements());
+    this->elements = new xMeshElements(this->getPointsPointer(), this->getPolygonsPointer(), this->xEdges, this->xpointMap);
+
+    config.setMesh(this->elements);
 
     this->merger = config.merger;
     this->refiner = config.refiner;
@@ -42,12 +44,35 @@ xMesh::xMesh(Mesh<Polygon> mesh, Config config) {
     this->xEdges = new xSegmentMap(*mesh.getSegments());
     this->edges = this->xEdges;
 
-    config.setMesh(this->getElements());
+    this->elements = new xMeshElements(this->getPointsPointer(), this->getPolygonsPointer(), this->xEdges, this->xpointMap);
+    config.setMesh(this->elements);
 
     this->merger = config.merger;
     this->refiner = config.refiner;
     this->reconstructor = config.reconstructor;
     this->closingRule = config.closingRule;
+}
+
+xMesh::xMesh(const xMesh &m) {
+    this->points.push_list(m.getPoints());
+    std::vector<xPolygon> polygons = m.getPolygons();
+
+    this->polygons.assign(polygons.begin(), polygons.end());
+    this->xEdges = new xSegmentMap(*m.getSegments());
+    this->edges = this->xEdges;
+    this->xpointMap = new xPointMap(*m.getPointMap());
+    this->pointMap =  this->xpointMap;
+
+    this->elements = new xMeshElements(this->getPointsPointer(), this->getPolygonsPointer(), this->xEdges, this->xpointMap);
+
+    this->merger = m.merger;
+    this->merger->setMesh(this->elements);
+
+    this->refiner = m.refiner;
+    this->refiner->setMesh(this->elements);
+
+    this->reconstructor = m.reconstructor;
+    this->closingRule = m.closingRule;
 }
 
 void xMesh::swapElements(int first, int last, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore) {
@@ -138,6 +163,14 @@ int xMesh::replaceElementsForMerged(std::vector<int> merged, std::vector<int> po
     }
 
     return polys.back();
+}
+
+UniqueList<Point> *xMesh::getPointsPointer() {
+    return &this->points;
+}
+
+std::vector<xPolygon> *xMesh::getPolygonsPointer() {
+    return &this->polygons;
 }
 
 void xMesh::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
@@ -263,7 +296,7 @@ void xMesh::breakMesh(PointSegment segment) {
         n1 = n2;
     }
 
-    xMeshElements elements = this->getElements();
+    xMeshElements* elements = this->getElements();
 
     closingRule->closePolygon(elements, segment.getFirst(), initialPolygon, initialInfo);
     closingRule->closePolygon(elements, segment.getSecond(), lastPolygon, n1);
@@ -521,6 +554,8 @@ void xMesh::refine(Point p) {
 
     xPolygon elem = this->getPolygon(container.containers[0]);
     this->refiner->refine(elem, {p});
+
+    this->printInFile("afterRefining.txt");
 }
 
 void xMesh::refine(std::vector<Point> p) {
@@ -614,10 +649,18 @@ xSegmentMap *xMesh::getSegments() {
     return this->xEdges;
 }
 
+xSegmentMap *xMesh::getSegments() const {
+    return this->xEdges;
+}
+
 xPointMap *xMesh::getPointMap() {
     return this->xpointMap;
 }
 
-xMeshElements xMesh::getElements() {
-    return xMeshElements(this->points, this->polygons, this->xEdges, this->xpointMap);
+xPointMap *xMesh::getPointMap() const {
+    return this->xpointMap;
+}
+
+xMeshElements* xMesh::getElements() {
+    return this->elements;
 }

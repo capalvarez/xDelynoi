@@ -12,12 +12,12 @@ std::unordered_map<int, int> AddElementsAdapter::includeNewPoints(UniqueList<Poi
     return pointMap;
 }
 
-void AddElementsAdapter::includeNewElements(xMeshElements& mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex) {
+void AddElementsAdapter::includeNewElements(xMeshElements* mesh, SimpleMesh toInclude, std::unordered_map<int, int> pointMap, int originalIndex) {
     std::unordered_map<int,std::unordered_map<IndexSegment,std::vector<IndexSegment>,SegmentHasher>> changesInNeighbours;
 
-    UniqueList<Point>* meshPoints = mesh.points;
-    std::vector<xPolygon>* meshElements = mesh.polygons;
-    SegmentMap* segments = mesh.segments;
+    UniqueList<Point>* meshPoints = mesh->points;
+    std::vector<xPolygon>* meshElements = mesh->polygons;
+    SegmentMap* segments = mesh->segments;
 
     std::vector<Polygon> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
@@ -97,7 +97,7 @@ void AddElementsAdapter::includeNewElements(xMeshElements& mesh, SimpleMesh toIn
         if(value.first<0)
             continue;
 
-        xPolygon poly = meshElements->at(value.first);
+        xPolygon& poly = meshElements->at(value.first);
 
         for(auto s: value.second){
             poly.replaceSegment(s.first, s.second, meshPoints->getList());

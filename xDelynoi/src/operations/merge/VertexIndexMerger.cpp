@@ -3,9 +3,9 @@
 VertexIndexMerger::VertexIndexMerger() {}
 
 bool VertexIndexMerger::areMergeable(xPolygon poly1, int poly2) {
-    xSegmentMap* edges = mesh.segments;
+    xSegmentMap* edges = mesh->segments;
 
-    xPolygon p2 = mesh.polygons->at(poly2);
+    xPolygon p2 = mesh->polygons->at(poly2);
 
     std::vector<IndexSegment> poly1_segments;
     poly1.getSegments(poly1_segments);
@@ -110,7 +110,7 @@ std::vector<int> VertexIndexMerger::merge(xPolygon e1, xPolygon e2, Pair<int> en
 
 std::vector<int> VertexIndexMerger::mergeElements(xPolygon e1, xPolygon e2) {
     bool pacman_case = false;
-    UniqueList<Point> points = *mesh.points;
+    UniqueList<Point> points = *mesh->points;
     Pair<int> endPoints = e1.commonEdgesBorderPoints(e2, points.getList(), pacman_case);
 
     return merge(e1, e2, endPoints, pacman_case);
@@ -124,11 +124,11 @@ std::vector<int> VertexIndexMerger::mergeElements(xPolygon e1, xPolygon e2, Inde
 
 std::vector<int> VertexIndexMerger::mergeElements(std::vector<int> elements) {
     if(elements.size()==1){
-        return mesh.polygons->at(elements[0]).getPoints();
+        return mesh->polygons->at(elements[0]).getPoints();
     }
 
     std::vector<int> mergedPolygon;
-    UniqueList<Point> pointsList = *mesh.points;
+    UniqueList<Point> pointsList = *mesh->points;
     std::vector<Point> points = pointsList.getList();
     int i = elements.size()-1;
     int j = elements.size()-2;
@@ -138,8 +138,8 @@ std::vector<int> VertexIndexMerger::mergeElements(std::vector<int> elements) {
             throw std::invalid_argument("Impossible to merge polygons");
         }
 
-        if(areMergeable(mesh.polygons->at(elements[i]), elements[j])){
-            mergedPolygon = this->mergeElements(mesh.polygons->at(elements[i]), mesh.polygons->at(elements[j]));
+        if(areMergeable(mesh->polygons->at(elements[i]), elements[j])){
+            mergedPolygon = this->mergeElements(mesh->polygons->at(elements[i]), mesh->polygons->at(elements[j]));
             elements.erase(elements.begin()+i);
             elements.erase(elements.begin()+j);
             break;
@@ -159,13 +159,13 @@ std::vector<int> VertexIndexMerger::mergeElements(std::vector<int> elements) {
             j--;
         }
 
-        if(merged.containsPoint(mesh.points->getList(), mesh.polygons->at(elements[j]).getCentroid())){
+        if(merged.containsPoint(mesh->points->getList(), mesh->polygons->at(elements[j]).getCentroid())){
             elements.erase(elements.begin()+j);
             j = elements.size()-1;
             continue;
         }
 
-        mergedPolygon = this->mergeElements(merged, mesh.polygons->at(elements[j]));
+        mergedPolygon = this->mergeElements(merged, mesh->polygons->at(elements[j]));
         elements.erase(elements.begin()+j);
         j = elements.size()-1;
     }

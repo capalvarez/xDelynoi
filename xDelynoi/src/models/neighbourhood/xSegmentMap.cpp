@@ -7,6 +7,10 @@ xSegmentMap::xSegmentMap(SegmentMap segmentMap) {
     this->map = segmentMap.getMap();
 }
 
+xSegmentMap::xSegmentMap(const xSegmentMap &m) {
+    this->map = m.getMap();
+}
+
 void xSegmentMap::changeNeighbour(NeighboursBySegment& n, int oldN, int newN) {
     if(n.getFirst()==oldN){
         n.setFirst(newN);

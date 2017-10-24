@@ -10,9 +10,9 @@ struct xMeshElements {
     xSegmentMap *segments;
     xPointMap *pointMap;
 
-    xMeshElements(UniqueList<Point> &p, std::vector<xPolygon> &poly, xSegmentMap *seg, xPointMap *pM){
-        points = &p;
-        polygons = &poly;
+    xMeshElements(UniqueList<Point>* p, std::vector<xPolygon>* poly, xSegmentMap *seg, xPointMap *pM){
+        points = p;
+        polygons = poly;
         segments = seg;
         pointMap = pM;
     }

@@ -1,17 +1,17 @@
 #include <xDelynoi/operations/break/closingrules/TriangulateClosingRule.h>
 
 
-void TriangulateClosingRule::closePolygon(xMeshElements& mesh, Point p, int polygon, NeighbourInfo info) {
-    UniqueList<Point> points = *mesh.points;
+void TriangulateClosingRule::closePolygon(xMeshElements* mesh, Point p, int polygon, NeighbourInfo info) {
+    UniqueList<Point> points = *mesh->points;
     int index;
 
     if(info.edge.isInCorner(p, points.getList(), index)){
         return;
     }
 
-    xPointMap* pointMap = mesh.pointMap;
-    xSegmentMap* segmentMap = mesh.segments;
-    xPolygon poly = mesh.polygons->at(polygon);
+    xPointMap* pointMap = mesh->pointMap;
+    xSegmentMap* segmentMap = mesh->segments;
+    xPolygon poly = mesh->polygons->at(polygon);
 
     int pIndex = points.push_back(p);
     int p1Index = points.push_back(info.intersection);

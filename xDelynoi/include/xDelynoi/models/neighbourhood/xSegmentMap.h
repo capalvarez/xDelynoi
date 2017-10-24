@@ -11,6 +11,7 @@ private:
 public:
     xSegmentMap();
     xSegmentMap(SegmentMap segmentMap);
+    xSegmentMap(const xSegmentMap& m);
     void changeNeighbour(IndexSegment s, int oldNeighbour, int newNeighbour);
     bool isNeighbour(IndexSegment s, int poly);
     bool isInBorder(IndexSegment s);
