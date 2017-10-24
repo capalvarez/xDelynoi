@@ -4,7 +4,6 @@
 #include <delynoi/models/Mesh.h>
 #include <xDelynoi/models/neighbourhood/xPointMap.h>
 #include <xDelynoi/operations/MeshMerger.h>
-#include <xDelynoi/operations/MeshBreaker.h>
 #include <xDelynoi/operations/MeshRefiner.h>
 #include <xDelynoi/models/structures/ContainerInfo.h>
 #include <xDelynoi/config/Config.h>
@@ -14,7 +13,6 @@
 #include <xDelynoi/utilities/vector_ops.h>
 
 class MeshFixer;
-class MeshBreaker;
 
 class xMesh : public Mesh<xPolygon>{
 private:
@@ -22,12 +20,14 @@ private:
     xPointMap* xpointMap;
 
     MeshMerger* merger;
-    MeshBreaker* breaker;
     MeshRefiner* refiner;
+    ElementReconstructor* reconstructor;
+    ClosingRule* closingRule;
 
     ContainerInfo processContainerInfo(int poly, Point point);
     void swapElements(int first, int second, std::unordered_map<IndexSegment, int, SegmentHasher> &toIgnore);
     int replaceElementsForMerged(std::vector<int> merged, std::vector<int> polys, std::vector<int> deletedPoints);
+    void breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init);
 public:
     xMesh(Mesh<Triangle> mesh, Config config);
     xMesh(Mesh<Polygon> mesh, Config config);

@@ -3,7 +3,6 @@
 
 #include <xDelynoi/operations/MeshRefiner.h>
 #include <xDelynoi/operations/MeshMerger.h>
-#include <xDelynoi/operations/MeshBreaker.h>
 #include <xDelynoi/models/xMesh.h>
 #include "Configurations.h"
 
@@ -11,18 +10,19 @@ class Config{
 public:
     MeshRefiner* refiner;
     MeshMerger* merger;
-    MeshBreaker* breaker;
+    ElementReconstructor* reconstructor;
+    ClosingRule* closingRule;
 
-    Config(MeshRefiner* refiner, MeshMerger* merger, MeshBreaker* breaker){
+    Config(MeshRefiner* refiner, MeshMerger* merger, ElementReconstructor* reconstructor, ClosingRule* closingRule){
         this->refiner = refiner;
         this->merger = merger;
-        this->breaker = breaker;
+        this->reconstructor = reconstructor;
+        this->closingRule = closingRule;
     }
 
     void setMesh(xMeshElements mesh){
         this->refiner->setMesh(mesh);
         this->merger->setMesh(mesh);
-        this->breaker->setMesh(mesh);
     }
 
     explicit Config(Configurations::config config){
@@ -30,7 +30,7 @@ public:
 
         this->refiner = info.refiner;
         this->merger = info.merger;
-        this->breaker = info.breaker;
+
     }
 };
 
