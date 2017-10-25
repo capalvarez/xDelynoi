@@ -11,3 +11,7 @@ std::vector<int> NotAllowedMerger::mergeElements(xPolygon e1, xPolygon e2, Index
 std::vector<int> NotAllowedMerger::mergeElements(std::vector<int> elements) {
     return std::vector<int>();
 }
+
+MeshOperator *NotAllowedMerger::clone() {
+    return new NotAllowedMerger;
+}

@@ -9,6 +9,7 @@ protected:
 public:
     MeshOperator();
     void setMesh(xMeshElements*& mesh);
+    virtual MeshOperator* clone()=0;
 };
 
 #endif

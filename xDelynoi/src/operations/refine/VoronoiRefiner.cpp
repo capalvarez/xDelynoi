@@ -14,3 +14,6 @@ SimpleMesh VoronoiRefiner::computeElements(xPolygon elem, std::vector<Point> toA
     return toReturn;
 }
 
+MeshOperator *VoronoiRefiner::clone() {
+    return new VoronoiRefiner;
+}

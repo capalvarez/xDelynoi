@@ -65,10 +65,10 @@ xMesh::xMesh(const xMesh &m) {
 
     this->elements = new xMeshElements(this->getPointsPointer(), this->getPolygonsPointer(), this->xEdges, this->xpointMap);
 
-    this->merger = m.merger;
+    this->merger = (MeshMerger*) m.merger->clone();
     this->merger->setMesh(this->elements);
 
-    this->refiner = m.refiner;
+    this->refiner = (MeshRefiner*) m.refiner->clone();
     this->refiner->setMesh(this->elements);
 
     this->reconstructor = m.reconstructor;

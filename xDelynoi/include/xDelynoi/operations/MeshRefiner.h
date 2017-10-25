@@ -14,6 +14,7 @@ public:
 
     void refine(xPolygon elem, std::vector<Point> pointsToAdd);
     virtual SimpleMesh computeElements(xPolygon elem, std::vector<Point> toAdd)=0;
+    virtual MeshOperator* clone()=0;
 };
 
 #endif

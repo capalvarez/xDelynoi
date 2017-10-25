@@ -13,3 +13,7 @@ SimpleMesh TriangulateRefiner::computeElements(xPolygon elem, std::vector<Point>
 
     return meshToInclude;
 }
+
+MeshOperator *TriangulateRefiner::clone() {
+    return new TriangulateRefiner;
+}

@@ -172,3 +172,7 @@ std::vector<int> VertexIndexMerger::mergeElements(std::vector<int> elements) {
 
     return mergedPolygon;
 }
+
+MeshOperator *VertexIndexMerger::clone() {
+    return new VertexIndexMerger;
+}

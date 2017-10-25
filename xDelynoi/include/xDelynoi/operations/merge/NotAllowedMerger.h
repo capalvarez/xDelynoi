@@ -8,6 +8,7 @@ public:
     std::vector<int> mergeElements(xPolygon e1, xPolygon e2);
     std::vector<int> mergeElements(xPolygon e1, xPolygon e2, IndexSegment segment);
     std::vector<int> mergeElements(std::vector<int> elements);
+    MeshOperator* clone();
 };
 
 #endif

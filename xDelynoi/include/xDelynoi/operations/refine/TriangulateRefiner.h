@@ -10,6 +10,7 @@ class TriangulateRefiner : public MeshRefiner {
 public:
     TriangulateRefiner();
     SimpleMesh computeElements(xPolygon elem, std::vector<Point> toAdd);
+    MeshOperator* clone();
 };
 
 #endif
