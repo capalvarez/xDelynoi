@@ -1,5 +1,9 @@
 #include <xDelynoi/operations/break/closingrules/ClosestVertexClosingRule.h>
 
+bool ClosestVertexClosingRule::closingPointIsVertex() {
+    return true;
+}
+
 Point ClosestVertexClosingRule::getClosingPoint(IndexSegment segment, UniqueList<Point> points, Point intersection) {
     double distance1 = PointSegment(intersection, points[segment.getFirst()]).length();
     double distance2 = PointSegment(intersection, points[segment.getSecond()]).length();

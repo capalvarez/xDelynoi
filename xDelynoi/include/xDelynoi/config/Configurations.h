@@ -12,6 +12,7 @@
 #include <xDelynoi/operations/break/reconstructors/PolygonToTriangleReconstructor.h>
 #include <xDelynoi/operations/break/reconstructors/IdentityReconstructor.h>
 #include <xDelynoi/operations/merge/VertexIndexMerger.h>
+#include <xDelynoi/operations/break/closingrules/StraightLineClosingRule.h>
 
 struct config_info{
     ElementReconstructor* reconstructor;
@@ -31,7 +32,7 @@ struct config_info{
 };
 
 namespace Configurations{
-   enum class config {ForceTriangulation, TriangulationWithPolygons, PolygonalDefault, PolygonalTriangulateRefine};
+   enum class config {ForceTriangulation, TriangulationWithPolygons, PolygonalDefault, PolygonalTriangulateRefine, PolygonalBreakAddPoints};
 
     static std::map<Configurations::config,config_info> configurations = {
             {Configurations::config::ForceTriangulation, config_info(
@@ -45,7 +46,10 @@ namespace Configurations{
                     new VertexIndexMerger, new VoronoiRefiner)},
             {Configurations::config::PolygonalTriangulateRefine, config_info(
                     new IdentityReconstructor, new ClosestVertexClosingRule,
-                    new VertexIndexMerger, new TriangulateRefiner)}
+                    new VertexIndexMerger, new TriangulateRefiner)},
+            {Configurations::config::PolygonalBreakAddPoints, config_info(
+                    new IdentityReconstructor, new StraightLineClosingRule,
+                    new VertexIndexMerger, new VoronoiRefiner)}
     };
 };
 

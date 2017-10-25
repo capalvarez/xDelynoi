@@ -6,16 +6,16 @@ namespace break_functions{
         UniqueList<Point> points = *mesh->points;
         xSegmentMap* edges = mesh->segments;
         xPointMap* pointMap = mesh->pointMap;
-        std::vector<xPolygon> polygons = *mesh->polygons;
+        std::vector<xPolygon>* polygons = mesh->polygons;
 
         UniqueList<int> newPoints;
         std::vector<int> newElements = break_functions::computeNewPolygons(mesh, constructor, n1, n2, poly1, new1, new2, p1, p2);
 
         if(init>=0){
-            polygons[init].insertOnSegment(n1.edge, p1);
+            polygons->at(init).insertOnSegment(n1.edge, p1);
         }
 
-        polygons[n2.neighbour].insertOnSegment(n2.edge, p2);
+        polygons->at(n2.neighbour).insertOnSegment(n2.edge, p2);
 
         // Get the edge information for the old polygon and update it
         if(!n1.isVertex){
@@ -30,7 +30,7 @@ namespace break_functions{
         pointMap->insert(points[p2], {n2.neighbour, n1.neighbour, n1.neighbour});
 
         for(int newElem: newElements){
-            xPolygon elem = polygons[newElem];
+            xPolygon elem = polygons->at(newElem);
             std::vector<IndexSegment> segments;
             elem.getSegments(segments);
             std::vector<int> elemPoints = elem.getPoints();

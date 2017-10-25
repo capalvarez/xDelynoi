@@ -6,6 +6,7 @@
 
 class ClosestVertexClosingRule : public PolygonClosingRule{
 protected:
+    bool closingPointIsVertex();
     Point getClosingPoint(IndexSegment segment, UniqueList<Point> points, Point intersection);
 };
 

@@ -18,10 +18,11 @@ int main(){
     TriangleVoronoiGenerator g(seeds, square);
     Mesh<Polygon> m = g.getMesh();
 
-    xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
+    xMesh destructable(m, Config(Configurations::config::PolygonalBreakAddPoints));
     destructable.printInFile("destructible.txt");
 
     breakStraightLine(destructable);
+
 }
 
 void breakStraightLine(xMesh mesh){

@@ -197,7 +197,7 @@ void xMesh::breakMesh(PointSegment segment) {
     std::vector<int> previous;
 
     UniqueList<Point>& points = this->points;
-    std::vector<xPolygon> polygons = this->polygons;
+    std::vector<xPolygon>& polygons = this->polygons;
     xSegmentMap* edges = this->xEdges;
 
     ContainerInfo initialContainer = findContainer(segment.getFirst());
@@ -255,6 +255,7 @@ void xMesh::breakMesh(PointSegment segment) {
                 }
             }else{
                 lastPolygon = n1.neighbour;
+                n1.neighbour = init;
                 break;
             }
         }
@@ -287,6 +288,7 @@ void xMesh::breakMesh(PointSegment segment) {
         // Iterate
         if(oneLastIteration){
             lastPolygon = n1.neighbour;
+            n1.neighbour = init;
             break;
         }
 

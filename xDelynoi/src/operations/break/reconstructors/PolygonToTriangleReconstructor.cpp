@@ -8,6 +8,7 @@ PolygonToTriangleReconstructor::reconstructElement(std::vector<int> points, std:
 
     EarTriangulationGenerator generator;
     Polygon p(points, meshPoints);
+    p.fixCCW(meshPoints);
     std::vector<Triangle> triangulation = generator.triangulate(p, meshPoints);
 
     for (Triangle t : triangulation){

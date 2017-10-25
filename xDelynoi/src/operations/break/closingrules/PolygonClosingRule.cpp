@@ -1,5 +1,6 @@
 #include <xDelynoi/operations/break/closingrules/PolygonClosingRule.h>
 #include <xDelynoi/operations/break/functions/break_functions.h>
+#include <xDelynoi/utilities/geometric_ops.h>
 
 
 void PolygonClosingRule::closePolygon(xMeshElements* mesh, Point p, int polygon, NeighbourInfo info) {
@@ -30,15 +31,24 @@ void PolygonClosingRule::closePolygon(xMeshElements* mesh, Point p, int polygon,
     }
 
     Point closingPoint = this->getClosingPoint(intersected, *points, intersection);
+    intersected.orderCCW(points->getList(), poly.getCentroid());
 
     int pIndex = points->push_back(p);
     int p1Index = utilities::indexOf(points->getList(), info.intersection);
     int p2Index = points->push_back(closingPoint);
 
     std::vector<int> new1 = {p2Index, pIndex, p1Index};
+    geometric_ops::fixCCW(new1, intersected.getFirst(),  points->getList());
+
     std::vector<int> new2 = {p1Index, pIndex, p2Index};
+    geometric_ops::fixCCW(new2, intersected.getSecond(), points->getList());
 
     NeighbourInfo n1 (polygon, intersected, intersection, false);
+    n1.isVertex = this->closingPointIsVertex();
     ElementReconstructor* reconstructor = new IdentityReconstructor();
-    break_functions::partitionPolygonFromSegment(mesh, reconstructor, n1, info, poly, new1, new2, p1Index, p2Index, segmentMap->getOther(intersected,polygon));
+
+    int p1 = n1.edge.contains(points->getList(), points->operator[](p1Index))? p1Index : p2Index;
+    int p2 = p1 == p1Index? p2Index : p1Index;
+
+    break_functions::partitionPolygonFromSegment(mesh, reconstructor, n1, info, poly, new1, new2, p1, p2, segmentMap->getOther(intersected,polygon));
 }

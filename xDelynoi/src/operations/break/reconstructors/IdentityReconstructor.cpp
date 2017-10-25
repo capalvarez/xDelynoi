@@ -3,6 +3,9 @@
 
 std::vector<xPolygon>
 IdentityReconstructor::reconstructElement(std::vector<int> points, std::vector<Point> meshPoints) {
-    std::vector<xPolygon> elements = {xPolygon(points, meshPoints)};
+    xPolygon newPolygon(points, meshPoints);
+    newPolygon.fixCCW(meshPoints);
+
+    std::vector<xPolygon> elements = {newPolygon};
     return elements;
 }
