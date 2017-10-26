@@ -11,11 +11,13 @@ namespace break_functions{
         UniqueList<int> newPoints;
         std::vector<int> newElements = break_functions::computeNewPolygons(mesh, constructor, n1, n2, poly1, new1, new2, p1, p2);
 
-        if(init>=0){
+        if(init>=0 && !n1.isVertex){
             polygons->at(init).insertOnSegment(n1.edge, p1);
         }
 
-        polygons->at(n2.neighbour).insertOnSegment(n2.edge, p2);
+        if(!n2.isVertex){
+            polygons->at(n2.neighbour).insertOnSegment(n2.edge, p2);
+        }
 
         // Get the edge information for the old polygon and update it
         if(!n1.isVertex){
