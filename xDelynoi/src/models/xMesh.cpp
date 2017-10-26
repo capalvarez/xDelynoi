@@ -193,6 +193,7 @@ void xMesh::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
 
 void xMesh::breakMesh(PointSegment segment) {
     int init, initialPolygon, lastPolygon;
+    bool startFromBoundary = false, endInBoundary = false;
     NeighbourInfo initialInfo;
     std::vector<int> previous;
 
@@ -208,8 +209,12 @@ void xMesh::breakMesh(PointSegment segment) {
 
     if(initialContainer.inEdge){
         xPolygon p1 = polygons[initialContainer.containers[0]];
-        initialPolygon = p1.numberOfInteresectedSegments(segment, points.getList())>1? initialContainer.containers[1] :
-                         initialContainer.containers[0];
+        if(!initialContainer.isInBoundary){
+            initialPolygon = p1.numberOfInteresectedSegments(segment, points.getList())>1? initialContainer.containers[1] :
+                             initialContainer.containers[0];
+        }else{
+            initialPolygon = initialContainer.containers[0];
+        }
     }
 
     if(initialContainer.inVertex){
@@ -232,13 +237,12 @@ void xMesh::breakMesh(PointSegment segment) {
     if(initialContainer.isInBoundary){
         IndexSegment container_edge = polygons[initialContainer.containers[0]].containerEdge(points.getList(),
                                                                                              segment.getFirst());
+        NeighbourInfo n0 = NeighbourInfo(initialContainer.containers[0], container_edge, segment.getFirst(), false);
+        n0.extraPoint = -1;
 
-        if(!isEndPoint(container_edge, segment.getFirst())){
-            NeighbourInfo n0 = NeighbourInfo(initialContainer.containers[0], container_edge, segment.getFirst() ,false);
-
-            breakPolygons(n0, n1, -1);
-            last = polygons.size() - 1;
-        }
+        breakPolygons(n0, n1, -1);
+        last = polygons.size() - 1;
+        startFromBoundary = true;
     }
 
     bool oneLastIteration = false;
@@ -305,9 +309,9 @@ void xMesh::breakMesh(PointSegment segment) {
 
     xMeshElements* elements = this->getElements();
 
-    closingRule->closePolygon(elements, segment.getFirst(), initialPolygon, initialInfo);
+    closingRule->closePolygon(elements, segment.getFirst(), initialPolygon, initialInfo, startFromBoundary);
     this->printInFile("afterFirst.txt");
-    closingRule->closePolygon(elements, segment.getSecond(), lastPolygon, n1);
+    closingRule->closePolygon(elements, segment.getSecond(), lastPolygon, n1, endInBoundary);
 }
 
 void xMesh::breakMesh(std::vector<PointSegment> segments) {
@@ -478,7 +482,19 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
             std::vector<int> neighbours = neighbourInfo.getNeighbours();
             neighbours.erase(std::remove(neighbours.begin(), neighbours.end(), poly_index));
 
+            for(int prev: previous){
+                auto it = std::find(neighbours.begin(), neighbours.end(), prev);
+                if(it != neighbours.end()){
+                    neighbours.erase(it);
+                }
+            }
+
             int neighbour = getNeighbourFromCommonVertexSet(direction, neighbours, vertexIndex);
+
+            auto find = std::find(previous.begin(), previous.end(), neighbour);
+            if(neighbour==-1 || find!=previous.end()){
+                continue;
+            }
 
             NeighbourInfo n(neighbour, polySeg[j], p, false);
             n.isVertex = true;
@@ -507,7 +523,7 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
 }
 
 int xMesh::getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<int> vertexSet, int vertexIndex) {
-    int correctNeighbour = 0;
+    int correctNeighbour = -1;
     for(int p: vertexSet){
         xPolygon candidate = this->getPolygon(p);
 
@@ -515,7 +531,7 @@ int xMesh::getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<i
             continue;
         }
 
-        if(candidate.numberOfInteresectedSegments(direction, this->points.getList())==2){
+        if(candidate.numberOfInteresectedSegments(direction, this->points.getList())>2){
             correctNeighbour = p;
         }
     }
@@ -614,13 +630,23 @@ ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
         }
 
         if(vertexIndex!=-1){
-            NeighboursByPoint n = pointMap->get(point);
+            IndexSegment otherContainer = polygon.getOtherContainer(container_edge, vertexIndex);
 
-            return ContainerInfo(point, n.getNeighbours());
+            if(isInBorder(otherContainer)){
+                inBoundary = true;
+            }
+
+            NeighboursByPoint n = pointMap->get(point);
+            ContainerInfo info(point, n.getNeighbours());
+            info.setAsBoundary(inBoundary);
+
+            return info;
         }else{
             NeighboursBySegment n = edges->get(container_edge);
+            ContainerInfo info (point, n.getFirst(), n.getSecond());
+            info.setAsBoundary(inBoundary);
 
-            return ContainerInfo(point, n.getFirst(), n.getSecond());
+            return info;
         }
     }
 

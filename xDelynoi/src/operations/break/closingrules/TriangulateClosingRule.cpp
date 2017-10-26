@@ -1,11 +1,11 @@
 #include <xDelynoi/operations/break/closingrules/TriangulateClosingRule.h>
 
 
-void TriangulateClosingRule::closePolygon(xMeshElements* mesh, Point p, int polygon, NeighbourInfo info) {
+void TriangulateClosingRule::closePolygon(xMeshElements* mesh, Point p, int polygon, NeighbourInfo info, bool previouslyBroken) {
     UniqueList<Point> points = *mesh->points;
     int index;
 
-    if(info.edge.isInCorner(p, points.getList(), index)){
+    if(info.edge.isInCorner(p, points.getList(), index) || previouslyBroken){
         return;
     }
 

@@ -7,6 +7,7 @@
 class xPolygon: public Polygon {
 private:
     Pair<int> segmentNotContained(std::vector<IndexSegment> s);
+    std::vector<IndexSegment> surroundingVertices(int vertexIndex);
 public:
     xPolygon(Polygon polygon);
     xPolygon(std::vector<int> points, UniqueList<Point> meshPoints);
@@ -23,6 +24,7 @@ public:
 
     void insertOnSegment(IndexSegment segment, int point);
     void insertOnSegment(IndexSegment segment, std::vector<int> point);
+    IndexSegment getOtherContainer(IndexSegment segment, int vertexIndex);
 };
 
 #endif

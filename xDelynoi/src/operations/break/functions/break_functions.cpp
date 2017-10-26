@@ -69,7 +69,7 @@ namespace break_functions{
 
         int indexOfStart, point;
 
-        if (delynoi_utilities::orientation(points->operator[](p1), points->operator[](p2), points->operator[](n2.edge.getFirst())) >= 0) {
+        if (delynoi_utilities::orientation(points->operator[](p1), points->operator[](p2), points->operator[](n2.edge.getFirst())) > 0) {
             indexOfStart = utilities::indexOf(poly1_points, n2.edge.getFirst());
             point = n2.edge.getFirst();
         } else {

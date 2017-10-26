@@ -12,6 +12,10 @@ namespace xdelynoi_utilities{
         return IndexSegment(i1, i2);
     }
 
+    PointSegment convert(IndexSegment s, UniqueList<Point> points){
+        return PointSegment(points[s.getFirst()], points[s.getSecond()]);
+    }
+
     void getAllPairs(std::vector<Pair<int>> &pairs, std::vector<int> numbers) {
         int N = numbers.size();
         std::string bitmask(2, 1);

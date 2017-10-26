@@ -116,6 +116,18 @@ Pair<int> xPolygon::segmentNotContained(std::vector<IndexSegment> s) {
     return Pair<int>(-1,-1);
 }
 
+std::vector<IndexSegment> xPolygon::surroundingVertices(int vertexIndex) {
+    int i = utilities::indexOf(this->points, vertexIndex);
+    if(i<0){
+        return std::vector<IndexSegment>();
+    }
+
+    int n = numberOfSides();
+    std::vector<IndexSegment> segs = {IndexSegment((n + i - 1)%n, i), IndexSegment(i, (i+1)%n)};
+
+    return segs;
+}
+
 void xPolygon::replaceVertex(int oldVertex, int newVertex, xSegmentMap* edges) {
     bool changePrev = false, changeNext = false;
     NeighboursBySegment nPrev, nNext;
@@ -245,4 +257,9 @@ void xPolygon::insertOnSegment(IndexSegment segment, std::vector<int> point) {
         }
 
     }
+}
+
+IndexSegment xPolygon::getOtherContainer(IndexSegment segment, int vertexIndex) {
+    std::vector<IndexSegment> segments = this->surroundingVertices(vertexIndex);
+    return segments[0]==segment? segments[1] : segments[0];
 }

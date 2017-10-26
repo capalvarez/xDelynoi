@@ -9,7 +9,7 @@ protected:
     virtual Point getClosingPoint(IndexSegment segment, UniqueList<Point> points, Point intersection) = 0;
     virtual bool closingPointIsVertex() = 0;
 public:
-    void closePolygon(xMeshElements* mesh, Point p, int polygon, NeighbourInfo info);
+    void closePolygon(xMeshElements *mesh, Point p, int polygon, NeighbourInfo info, bool previouslyBroken);
 };
 
 #endif
