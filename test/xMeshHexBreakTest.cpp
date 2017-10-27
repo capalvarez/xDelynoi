@@ -15,7 +15,7 @@ int main(){
     std::vector<Point> square_points = {Point(0,0), Point(10,0), Point(10,10), Point(0,10)};
     Region square(square_points);
 
-    square.generateSeedPoints(PointGenerator(functions::random_double(0,10), functions::random_double(0,10)), 7, 7);
+    square.generateSeedPoints(PointGenerator(functions::constant(), functions::displace_points(1.25)), 8, 8);
     std::vector<Point> seeds = square.getSeedPoints();
     TriangleVoronoiGenerator g(seeds, square);
     Mesh<Polygon> m = g.getMesh();
@@ -23,7 +23,7 @@ int main(){
     xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
     destructable.printInFile("destructible.txt");
 
-    breakStraightLine(destructable);
+    breakThroughVertex(destructable);
 
 }
 

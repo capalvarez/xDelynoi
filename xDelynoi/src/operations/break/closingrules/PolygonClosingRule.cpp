@@ -24,7 +24,7 @@ PolygonClosingRule::closePolygon(xMeshElements *mesh, Point p, int polygon, Neig
             if (s == info.edge){
                 continue;
             } else {
-                if(info.isVertex && intersection == info.intersection){
+                if(intersection == info.intersection){
                     continue;
                 }
                 intersected = s;

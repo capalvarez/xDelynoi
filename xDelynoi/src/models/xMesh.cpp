@@ -192,138 +192,149 @@ void xMesh::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
 }
 
 void xMesh::breakMesh(PointSegment segment) {
+   std::vector<PointSegment> segments = {segment};
+
+    this->breakMesh(segments);
+}
+
+void xMesh::breakMesh(std::vector<PointSegment> segments) {
     int init, initialPolygon, lastPolygon;
     bool startFromBoundary = false, endInBoundary = false, atLeastOne = false;
-    NeighbourInfo initialInfo;
-    std::vector<int> previous;
+    NeighbourInfo initialInfo, n1;
 
-    UniqueList<Point>& points = this->points;
-    std::vector<xPolygon>& polygons = this->polygons;
-    xSegmentMap* edges = this->xEdges;
+    for (int i = 0; i < segments.size(); ++i) {
+        std::vector<int> previous;
 
-    ContainerInfo initialContainer = findContainer(segment.getFirst());
+        UniqueList<Point>& points = this->points;
+        std::vector<xPolygon>& polygons = this->polygons;
+        xSegmentMap* edges = this->xEdges;
 
-    if(initialContainer.insidePolygon){
-        initialPolygon = initialContainer.containers[0];
-    }
+        ContainerInfo initialContainer = findContainer(segments[i].getFirst());
 
-    if(initialContainer.inEdge){
-        xPolygon p1 = polygons[initialContainer.containers[0]];
-        if(!initialContainer.isInBoundary){
-            initialPolygon = p1.numberOfInteresectedSegments(segment, points.getList())>1? initialContainer.containers[1] :
-                             initialContainer.containers[0];
-        }else{
+        if(initialContainer.insidePolygon){
             initialPolygon = initialContainer.containers[0];
         }
-    }
 
-    if(initialContainer.inVertex){
-        int vertexIndex = utilities::indexOf(points.getList(), segment.getFirst());
-        int nextPolygon = getNeighbourFromCommonVertexSet(segment, initialContainer.containers, vertexIndex);
-
-        for (int i: initialContainer.containers){
-            if(i!=nextPolygon){
-                initialPolygon = i;
-                break;
+        if(initialContainer.inEdge){
+            xPolygon p1 = polygons[initialContainer.containers[0]];
+            if(!initialContainer.isInBoundary){
+                initialPolygon = p1.numberOfInteresectedSegments(segments[i], points.getList())>1? initialContainer.containers[1] :
+                                 initialContainer.containers[0];
+            }else{
+                initialPolygon = initialContainer.containers[0];
             }
         }
-    }
 
-    NeighbourInfo n1 = getNeighbour(initialPolygon, segment, previous);
-    initialInfo = n1;
-    int last = initialPolygon;
+        int vertexIndex;
+        if(initialContainer.inVertex){
+            vertexIndex = utilities::indexOf(points.getList(), segments[i].getFirst());
+            int nextPolygon = getNeighbourFromCommonVertexSet(segments[i], initialContainer.containers, vertexIndex);
+            initialPolygon = nextPolygon;
+        }
 
-    //If the initial point lies in the boundary, still include an extra point in the mesh
-    if(initialContainer.isInBoundary){
-        IndexSegment container_edge = polygons[initialContainer.containers[0]].containerEdge(points.getList(),
-                                                                                             segment.getFirst());
-        NeighbourInfo n0 = NeighbourInfo(initialContainer.containers[0], container_edge, segment.getFirst(), false);
-        n0.extraPoint = -1;
+        n1 = getNeighbour(initialPolygon, segments[i], previous);
 
-        breakPolygons(n0, n1, -1);
-        last = polygons.size() - 1;
-        startFromBoundary = true;
-    }
+        if(i==0){
+            initialInfo = n1;
+        }
 
-    bool oneLastIteration = false;
-    init = initialPolygon;
+        int last = initialPolygon;
 
-    int i = 0;
-    while(true){
-        xPolygon poly1 = polygons[n1.neighbour];
+        //If the initial point lies in the boundary, still include an extra point in the mesh
+        if(initialContainer.isInBoundary) {
+            IndexSegment container_edge;
 
-        if(poly1.containsPoint(points.getList(), segment.getSecond())){
-            if(poly1.inEdges(points.getList(), segment.getSecond())){
-                if(!oneLastIteration){
-                    oneLastIteration = true;
-                }
+            if(initialContainer.inVertex){
+                std::vector<IndexSegment> container_segs;
+                polygons[initialPolygon].getAdjacentEdges(vertexIndex, container_segs);
+
+                container_edge = isInBorder(container_segs[0])? container_segs[0] : container_segs[1];
             }else{
-                if(!atLeastOne){
+                container_edge = polygons[initialPolygon].containerEdge(points.getList(), segments[i].getFirst());
+            }
 
+            NeighbourInfo n0 = NeighbourInfo(initialPolygon, container_edge, segments[i].getFirst(), false);
+            n0.extraPoint = -1;
+
+            breakPolygons(n0, n1, -1);
+            last = polygons.size() - 1;
+            startFromBoundary = true;
+        }
+
+        bool oneLastIteration = false;
+        init = initialPolygon;
+
+        while(true){
+            xPolygon poly1 = polygons[n1.neighbour];
+
+            if(poly1.containsPoint(points.getList(), segments[i].getSecond())){
+                if(poly1.inEdges(points.getList(), segments[i].getSecond())){
+                    if(!oneLastIteration){
+                        oneLastIteration = true;
+                    }
+                }else{
+                    if(!atLeastOne){
+
+                    }
+
+                    lastPolygon = n1.neighbour;
+                    n1.neighbour = init;
+                    break;
+                }
+            }
+
+            if(!atLeastOne){
+                atLeastOne = true;
+            }
+
+            std::vector<int> poly1_points = poly1.getPoints();
+
+            if(!n1.isVertex){
+                previous = {init, last};
+            }else{
+                if(last==-1){
+                    previous.push_back(last);
+                }else{
+                    previous = {init, last};
                 }
 
+            }
+
+            NeighbourInfo n2 = getNeighbour(n1.neighbour, segments[i], previous);
+
+            if(n1.isEdge){
+                init = n1.neighbour;
+                n1 = n2;
+
+                last = edges->getOther(n1.edge, n1.neighbour);
+                continue;
+            }
+
+            breakPolygons(n1, n2, init);
+
+            // Iterate
+            if(oneLastIteration){
                 lastPolygon = n1.neighbour;
                 n1.neighbour = init;
                 break;
             }
-        }
 
-        if(!atLeastOne){
-            atLeastOne = true;
-        }
+            IndexSegment edge = n2.edge;
 
-        std::vector<int> poly1_points = poly1.getPoints();
-
-        if(!n1.isVertex){
-            previous = {init, last};
-        }else{
-            if(last==-1){
-                previous.push_back(last);
-            }else{
-                previous = {init, last};
-            }
-
-        }
-
-        NeighbourInfo n2 = getNeighbour(n1.neighbour, segment, previous);
-
-        if(n1.isEdge){
+            last = polygons.size()-1;
             init = n1.neighbour;
             n1 = n2;
 
-            last = edges->getOther(n1.edge, n1.neighbour);
-            continue;
+            std::string step = "step" + utilities::toString(i) + ".txt";
+            this->printInFile(step);
         }
-
-        breakPolygons(n1, n2, init);
-
-        // Iterate
-        if(oneLastIteration){
-            lastPolygon = n1.neighbour;
-            n1.neighbour = init;
-            break;
-        }
-
-        IndexSegment edge = n2.edge;
-
-        last = polygons.size()-1;
-        init = n1.neighbour;
-        n1 = n2;
-
-        std::string step = "step" + utilities::toString(i) + ".txt";
-        this->printInFile(step);
-        i++;
     }
 
     xMeshElements* elements = this->getElements();
 
-    closingRule->closePolygon(elements, segment.getFirst(), initialPolygon, initialInfo, startFromBoundary);
+    closingRule->closePolygon(elements, segments[0].getFirst(), initialPolygon, initialInfo, startFromBoundary);
     this->printInFile("afterFirst.txt");
-    closingRule->closePolygon(elements, segment.getSecond(), lastPolygon, n1, endInBoundary);
-}
-
-void xMesh::breakMesh(std::vector<PointSegment> segments) {
-
+    closingRule->closePolygon(elements, segments.back().getSecond(), lastPolygon, n1, endInBoundary);
 }
 
 
