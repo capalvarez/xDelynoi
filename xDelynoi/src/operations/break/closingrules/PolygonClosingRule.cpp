@@ -1,8 +1,5 @@
 #include <xDelynoi/operations/break/closingrules/PolygonClosingRule.h>
 #include <xDelynoi/operations/break/functions/break_functions.h>
-#include <xDelynoi/utilities/geometric_ops.h>
-#include <xDelynoi/utilities/xdelynoi_utilities.h>
-
 
 void
 PolygonClosingRule::closePolygon(xMeshElements *mesh, Point p, int polygon, NeighbourInfo info, bool previouslyBroken) {

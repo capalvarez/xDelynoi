@@ -120,7 +120,8 @@ std::vector<IndexSegment> xPolygon::surroundingVertices(int vertexIndex) {
     }
 
     int n = numberOfSides();
-    std::vector<IndexSegment> segs = {IndexSegment((n + i - 1)%n, i), IndexSegment(i, (i+1)%n)};
+    std::vector<IndexSegment> segs = {IndexSegment(this->points[(n + i - 1)%n], this->points[i]),
+                                      IndexSegment(this->points[i], this->points[(i+1)%n])};
 
     return segs;
 }

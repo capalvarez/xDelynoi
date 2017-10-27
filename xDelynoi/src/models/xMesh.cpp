@@ -505,7 +505,10 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
                 for (IndexSegment c: candidates_seg){
                     if(c.isContained(direction, this->points.getList()) ||
                        c.contains(this->points.getList(), direction.getSecond())){
-                            return NeighbourInfo(n, c, p, true);
+                        NeighbourInfo info(n, c, p, true);
+                        info.isVertex = true;
+
+                        return info;
                     }
                 }
             }

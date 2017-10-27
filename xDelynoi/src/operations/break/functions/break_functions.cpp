@@ -66,8 +66,19 @@ namespace break_functions{
 
         std::vector<int> poly1_points = poly1.getPoints();
 
+        if(n2.isVertex && n2.isEdge){
+            xPolygon p2 = polygons->at(n2.neighbour);
+            int vertexIndex;
+            p2.isVertex(n2.intersection, points->getList(), vertexIndex);
+
+            IndexSegment otherContainer = p2.getOtherContainer(n2.edge, vertexIndex);
+            n2.edge = otherContainer;
+        }
+
         n1.orderCCW(points->getList(), poly1.getCentroid());
         n2.orderCCW(points->getList(), poly1.getCentroid());
+
+
 
         int indexOfStart, point;
 
