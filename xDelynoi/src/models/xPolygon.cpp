@@ -33,8 +33,7 @@ bool xPolygon::isVertex(int index) {
     return Polygon::isVertex(index);
 }
 
-std::vector<IndexSegment> xPolygon::getAdjacentEdges(int i) {
-    std::vector<IndexSegment> segs;
+void xPolygon::getAdjacentEdges(int i, std::vector<IndexSegment> &segs) {
     int index = utilities::indexOf(this->points, i);
     int n = this->numberOfSides();
 
@@ -42,8 +41,6 @@ std::vector<IndexSegment> xPolygon::getAdjacentEdges(int i) {
         segs.push_back(IndexSegment(this->points[(n+index-1)%n], this->points[index]));
         segs.push_back(IndexSegment(this->points[index], this->points[(n+index+1)%n]));
     }
-
-    return segs;
 }
 
 Pair<int> xPolygon::commonEdgesBorderPoints(xPolygon other, std::vector<Point> points, bool& pacman_case) {

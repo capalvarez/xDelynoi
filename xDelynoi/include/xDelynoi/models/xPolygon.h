@@ -16,7 +16,7 @@ public:
     bool isVertex(Point p, std::vector<Point> points, int &vertexIndex);
     bool isVertex(Point p, std::vector<Point> points);
     bool isVertex(int index);
-    std::vector<IndexSegment> getAdjacentEdges(int i);
+    void getAdjacentEdges(int i, std::vector<IndexSegment> &segs);
     void replaceVertex(int oldVertex, int newVertex, xSegmentMap* edges);
 
     void replaceSegment(IndexSegment seg, std::vector<IndexSegment> segs, std::vector<Point> points);

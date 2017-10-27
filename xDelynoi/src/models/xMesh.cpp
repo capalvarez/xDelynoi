@@ -193,7 +193,7 @@ void xMesh::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
 
 void xMesh::breakMesh(PointSegment segment) {
     int init, initialPolygon, lastPolygon;
-    bool startFromBoundary = false, endInBoundary = false;
+    bool startFromBoundary = false, endInBoundary = false, atLeastOne = false;
     NeighbourInfo initialInfo;
     std::vector<int> previous;
 
@@ -258,10 +258,18 @@ void xMesh::breakMesh(PointSegment segment) {
                     oneLastIteration = true;
                 }
             }else{
+                if(!atLeastOne){
+
+                }
+
                 lastPolygon = n1.neighbour;
                 n1.neighbour = init;
                 break;
             }
+        }
+
+        if(!atLeastOne){
+            atLeastOne = true;
         }
 
         std::vector<int> poly1_points = poly1.getPoints();
@@ -489,6 +497,19 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
                 }
             }
 
+            std::vector<IndexSegment> candidates_seg;
+            for (int n : neighbours) {
+                xPolygon nextPoly = getPolygon(n);
+                nextPoly.getAdjacentEdges(vertexIndex, candidates_seg);
+
+                for (IndexSegment c: candidates_seg){
+                    if(c.isContained(direction, this->points.getList()) ||
+                       c.contains(this->points.getList(), direction.getSecond())){
+                            return NeighbourInfo(n, c, p, true);
+                    }
+                }
+            }
+
             int neighbour = getNeighbourFromCommonVertexSet(direction, neighbours, vertexIndex);
 
             auto find = std::find(previous.begin(), previous.end(), neighbour);
@@ -506,7 +527,8 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
             if(find == previous.end()) {
                 if(polySeg[j].isInCorner(p, this->points.getList(), vertexIndex)){
                     xPolygon nextPoly = getPolygon(next_poly);
-                    std::vector<IndexSegment> candidateSegments = nextPoly.getAdjacentEdges(vertexIndex);
+                    std::vector<IndexSegment> candidateSegments;
+                    nextPoly.getAdjacentEdges(vertexIndex, candidateSegments);
 
                     bool isInEdge = candidateSegments[0].isContained(direction, this->points.getList()) ||
                                     candidateSegments[1].isContained(direction, this->points.getList());
