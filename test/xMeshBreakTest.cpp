@@ -23,12 +23,12 @@ int main(){
     xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
     destructable.printInFile("destructible.txt");
 
-    breakFromBoundaryVertex(destructable);
+    breakStraightLine(destructable);
 
 }
 
 void breakStraightLine(xMesh mesh){
-    mesh.breakMesh(PointSegment(Point(2,6), Point(6,6)));
+    mesh.breakMesh(PointSegment(Point(2,6), Point(3,6)));
     mesh.printInFile("brokenStraightLine.txt");
 }
 

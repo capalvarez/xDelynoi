@@ -265,7 +265,7 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
         init = initialPolygon;
 
         while(true){
-            xPolygon poly1 = polygons[n1.neighbour];
+            xPolygon& poly1 = polygons[n1.neighbour];
 
             if(poly1.containsPoint(points.getList(), segments[i].getSecond())){
                 if(poly1.inEdges(points.getList(), segments[i].getSecond())){
@@ -274,7 +274,13 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
                     }
                 }else{
                     if(!atLeastOne){
+                        int intersection = points.push_back(n1.intersection);
 
+                        if(init>=0){
+                            polygons[init].insertOnSegment(n1.edge, intersection);
+                        }
+
+                        poly1.insertOnSegment(n1.edge, intersection);
                     }
 
                     lastPolygon = n1.neighbour;
