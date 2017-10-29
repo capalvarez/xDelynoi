@@ -25,7 +25,7 @@ int main(){
 }
 
 void breakStraightLine(xMesh mesh){
-    std::vector<PointSegment> segs = {PointSegment(Point(2,6), Point(6,6)), PointSegment(Point(6,6), Point(7,8))};
+    std::vector<PointSegment> segs = {PointSegment(Point(2,6), Point(5,6)), PointSegment(Point(5,6), Point(8,9))};
 
     mesh.breakMesh(segs);
     mesh.printInFile("brokenStraightLine.txt");

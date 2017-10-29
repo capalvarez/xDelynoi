@@ -198,11 +198,12 @@ void xMesh::breakMesh(PointSegment segment) {
 }
 
 void xMesh::breakMesh(std::vector<PointSegment> segments) {
-    int init, initialPolygon, lastPolygon;
-    bool startFromBoundary = false, endInBoundary = false, atLeastOne = false;
-    NeighbourInfo initialInfo, n1;
+    int init, initialPolygon, lastPolygon, start, lastFinal=-1;
+    bool startFromBoundary = false, endInBoundary = false, atLeastOne, fixesIntermediate = false;
+    NeighbourInfo initialInfo, n1, lastInfo;
 
     for (int i = 0; i < segments.size(); ++i) {
+        atLeastOne = false;
         std::vector<int> previous;
 
         UniqueList<Point>& points = this->points;
@@ -236,9 +237,11 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
 
         if(i==0){
             initialInfo = n1;
+            start = initialPolygon;
         }
 
         int last = initialPolygon;
+        init = initialPolygon;
 
         //If the initial point lies in the boundary, still include an extra point in the mesh
         if(initialContainer.isInBoundary) {
@@ -262,21 +265,20 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
         }
 
         bool oneLastIteration = false;
-        init = initialPolygon;
 
-        while(true){
-            xPolygon& poly1 = polygons[n1.neighbour];
+        while(true) {
+            xPolygon &poly1 = polygons[n1.neighbour];
 
-            if(poly1.containsPoint(points.getList(), segments[i].getSecond())){
-                if(poly1.inEdges(points.getList(), segments[i].getSecond())){
-                    if(!oneLastIteration){
+            if (poly1.containsPoint(points.getList(), segments[i].getSecond())) {
+                if (poly1.inEdges(points.getList(), segments[i].getSecond())) {
+                    if (!oneLastIteration) {
                         oneLastIteration = true;
                     }
-                }else{
-                    if(!atLeastOne){
+                } else {
+                    if (!atLeastOne) {
                         int intersection = points.push_back(n1.intersection);
 
-                        if(init>=0){
+                        if (init >= 0) {
                             polygons[init].insertOnSegment(n1.edge, intersection);
                         }
 
@@ -284,31 +286,28 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
                     }
 
                     lastPolygon = n1.neighbour;
+                    lastFinal = n1.neighbour;
                     n1.neighbour = init;
+                    lastInfo = n1;
                     break;
                 }
             }
 
-            if(!atLeastOne){
-                atLeastOne = true;
-            }
-
             std::vector<int> poly1_points = poly1.getPoints();
 
-            if(!n1.isVertex){
+            if (!n1.isVertex) {
                 previous = {init, last};
-            }else{
-                if(last==-1){
+            } else {
+                if (last == -1) {
                     previous.push_back(last);
-                }else{
+                } else {
                     previous = {init, last};
                 }
-
             }
 
             NeighbourInfo n2 = getNeighbour(n1.neighbour, segments[i], previous);
 
-            if(n1.isEdge){
+            if (n1.isEdge) {
                 init = n1.neighbour;
                 n1 = n2;
 
@@ -318,27 +317,52 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
 
             breakPolygons(n1, n2, init);
 
+            if(!atLeastOne && lastFinal!=-1){
+                xPolygon poly = this->polygons[lastFinal];
+
+                Point p = segments[i].getFirst();
+                int pIndex = this->points.push_back(p);
+                int p1 = this->points.push_back(lastInfo.intersection);
+                int p2 = this->points.push_back(n1.intersection);
+
+                NeighbourInfo n1Close (lastFinal, lastInfo.edge, lastInfo.intersection, lastInfo.isEdge);
+                n1Close.isVertex = lastInfo.isVertex;
+
+                std::vector<int> new1 = {p1, pIndex, p2};
+                std::vector<int> new2 = {p2, pIndex, p1};
+
+                break_functions::partitionPolygonFromSegment(this->elements, reconstructor, n1Close, n1, poly, new1, new2, p1, p2, lastInfo.neighbour);
+                fixesIntermediate = true;
+            }
+
+            if(!atLeastOne){
+                atLeastOne = true;
+            }
+
             // Iterate
             if(oneLastIteration){
                 lastPolygon = n1.neighbour;
+                lastFinal = n1.neighbour;
                 n1.neighbour = init;
+                lastInfo = n1;
                 break;
             }
 
             IndexSegment edge = n2.edge;
 
-            last = polygons.size()-1;
+            last = fixesIntermediate? polygons.size()-2 : polygons.size()-1;
             init = n1.neighbour;
             n1 = n2;
 
             std::string step = "step" + utilities::toString(i) + ".txt";
             this->printInFile(step);
+            fixesIntermediate = false;
         }
     }
 
     xMeshElements* elements = this->getElements();
 
-    closingRule->closePolygon(elements, segments[0].getFirst(), initialPolygon, initialInfo, startFromBoundary);
+    closingRule->closePolygon(elements, segments[0].getFirst(), start, initialInfo, startFromBoundary);
     this->printInFile("afterFirst.txt");
     closingRule->closePolygon(elements, segments.back().getSecond(), lastPolygon, n1, endInBoundary);
 }
@@ -620,8 +644,6 @@ void xMesh::refine(Point p) {
 
     xPolygon elem = this->getPolygon(container.containers[0]);
     this->refiner->refine(elem, {p});
-
-    this->printInFile("afterRefining.txt");
 }
 
 void xMesh::refine(std::vector<Point> p) {
@@ -701,7 +723,6 @@ ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
 
 std::vector<int> xMesh::getNeighboursByPoint(int poly_index) {
     std::vector<Point> points = this->getPolygon(poly_index).getPoints(this->points.getList());
-
     return xpointMap->getAllNeighbours(points, poly_index);
 }
 

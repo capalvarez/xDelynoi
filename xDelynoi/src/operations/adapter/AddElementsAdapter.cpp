@@ -1,5 +1,8 @@
 #include <xDelynoi/operations/adapter/AddElementsAdapter.h>
 
+bool AddElementsAdapter::isBoundarySegment(xSegmentMap *segs, IndexSegment s) {
+    return segs->get(s).getFirst()==-1 || segs->get(s).getSecond()==-1;
+}
 
 std::unordered_map<int, int> AddElementsAdapter::includeNewPoints(UniqueList<Point> &meshPoints, std::vector<Point> points) {
     std::unordered_map<int,int> pointMap;
@@ -17,7 +20,7 @@ void AddElementsAdapter::includeNewElements(xMeshElements* mesh, SimpleMesh toIn
 
     UniqueList<Point>* meshPoints = mesh->points;
     std::vector<xPolygon>* meshElements = mesh->polygons;
-    SegmentMap* segments = mesh->segments;
+    xSegmentMap* segments = mesh->segments;
 
     std::vector<Polygon> elements = toInclude.getElements();
     std::vector<Point> newPoints = toInclude.getPoints();
@@ -59,9 +62,9 @@ void AddElementsAdapter::includeNewElements(xMeshElements* mesh, SimpleMesh toIn
         for (int j = 0; j < n; ++j) {
             bool changed = false;
             IndexSegment edge(newPolygonPoints[j], newPolygonPoints[(j+1)%n]);
-            xIndexSegment originalEdge(oldPoints[j],oldPoints[(j+1)%n]);
+            IndexSegment originalEdge(oldPoints[j],oldPoints[(j+1)%n]);
 
-            if(originalEdge.isSegmentInBoundary( newPoints)){
+            if(isBoundarySegment(segments,originalEdge)){
                 Angle a = edge.cartesianAngle(meshPoints->getList());
                 std::vector<IndexSegment> containerCandidates = containerSegmentsMap[a];
 
