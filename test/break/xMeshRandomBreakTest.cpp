@@ -1,3 +1,6 @@
+#include <delynoi/models/basic/Point.h>
+#include <delynoi/models/Region.h>
+#include <delynoi/voronoi/TriangleVoronoiGenerator.h>
 #include <xDelynoi/models/xMesh.h>
 
 void breakStraightLine(xMesh mesh);
@@ -5,14 +8,12 @@ void breakDiagonalLine(xMesh mesh);
 void breakThroughVertex(xMesh mesh);
 void breakFromBoundary(xMesh mesh);
 void breakFromBoundaryVertex(xMesh mesh);
-void breakThroughSegment(xMesh mesh);
-void breakMeshRightToLeft(xMesh mesh);
 
 int main(){
     std::vector<Point> square_points = {Point(0,0), Point(10,0), Point(10,10), Point(0,10)};
     Region square(square_points);
 
-    square.generateSeedPoints(PointGenerator(functions::constant(), functions::constant()), 7, 7);
+    square.generateSeedPoints(PointGenerator(functions::random_double(0,10), functions::random_double(0,10)), 7, 7);
     std::vector<Point> seeds = square.getSeedPoints();
     TriangleVoronoiGenerator g(seeds, square);
     Mesh<Polygon> m = g.getMesh();
@@ -25,9 +26,7 @@ int main(){
 }
 
 void breakStraightLine(xMesh mesh){
-    std::vector<PointSegment> segs = {PointSegment(Point(2,6), Point(5,6)), PointSegment(Point(5,6), Point(8,9))};
-
-    mesh.breakMesh(segs);
+    mesh.breakMesh(PointSegment(Point(2,6), Point(6,6)));
     mesh.printInFile("brokenStraightLine.txt");
 }
 
@@ -47,6 +46,6 @@ void breakFromBoundaryVertex(xMesh mesh){
 }
 
 void breakThroughVertex(xMesh mesh){
-    mesh.breakMesh(PointSegment(Point(3.33333,3.33333), Point(8.33333,8.33333)));
+    mesh.breakMesh(PointSegment(Point(4.17578, 4.196), Point(7.25279,4.19643)));
     mesh.printInFile("brokenThroughVertex.txt");
 }

@@ -173,6 +173,14 @@ std::vector<xPolygon> *xMesh::getPolygonsPointer() {
     return &this->polygons;
 }
 
+void xMesh::validateBreakSegments(std::vector<PointSegment> segs) {
+    for (int i = 1; i < segs.size() ; ++i) {
+        if(!(segs[i].getFirst() == segs[i-1].getSecond())){
+            throw std::invalid_argument("Segments used to break the mesh must be consecutive");
+        }
+    }
+}
+
 void xMesh::breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init) {
     UniqueList<Point>& points = this->points;
     std::vector<xPolygon>& polygons = this->polygons;
@@ -198,6 +206,8 @@ void xMesh::breakMesh(PointSegment segment) {
 }
 
 void xMesh::breakMesh(std::vector<PointSegment> segments) {
+    this->validateBreakSegments(segments);
+
     int init, initialPolygon, lastPolygon, start, lastFinal=-1;
     bool startFromBoundary = false, endInBoundary = false, atLeastOne, fixesIntermediate = false;
     NeighbourInfo initialInfo, n1, lastInfo;
@@ -214,6 +224,10 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
 
         if(initialContainer.insidePolygon){
             initialPolygon = initialContainer.containers[0];
+
+            if(this->getPolygon(initialPolygon).containsPoint(this->points.getList(), segments[i].getSecond())){
+                throw std::invalid_argument("Segments for breaking cannot be completely contained inside a single polygon");
+            }
         }
 
         if(initialContainer.inEdge){

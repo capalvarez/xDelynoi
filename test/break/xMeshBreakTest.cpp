@@ -8,8 +8,6 @@ void breakDiagonalLine(xMesh mesh);
 void breakThroughVertex(xMesh mesh);
 void breakFromBoundary(xMesh mesh);
 void breakFromBoundaryVertex(xMesh mesh);
-void breakThroughSegment(xMesh mesh);
-void breakMeshRightToLeft(xMesh mesh);
 
 int main(){
     std::vector<Point> square_points = {Point(0,0), Point(10,0), Point(10,10), Point(0,10)};

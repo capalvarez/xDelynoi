@@ -32,6 +32,7 @@ private:
     void breakPolygons(NeighbourInfo n1, NeighbourInfo &n2, int init);
     UniqueList<Point>* getPointsPointer();
     std::vector<xPolygon>* getPolygonsPointer();
+    void validateBreakSegments(std::vector<PointSegment> segs);
 public:
     xMesh(Mesh<Triangle> mesh, Config config);
     xMesh(Mesh<Polygon> mesh, Config config);

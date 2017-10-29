@@ -1,6 +1,5 @@
 #include <xDelynoi/models/xMesh.h>
 
-void breakOnePolygonInside(xMesh mesh);
 void breakOnePolygonVertices(xMesh mesh);
 void breakOnePolygonSides(xMesh mesh);
 void breakOnePolygonSegment(xMesh mesh);
@@ -18,11 +17,6 @@ int main(){
     destructable.printInFile("destructible.txt");
 
     breakOnePolygonSides(destructable);
-}
-
-void breakOnePolygonInside(xMesh mesh){
-    mesh.breakMesh(PointSegment(Point(2,6), Point(3,6)));
-    mesh.printInFile("brokenStraightLine.txt");
 }
 
 void breakOnePolygonVertices(xMesh mesh){
