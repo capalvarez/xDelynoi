@@ -664,8 +664,10 @@ void xMesh::refine(xPolygon poly, PointGenerator generator, int nX, int nY) {
 
 void xMesh::refine(xPolygon poly, PointCreator *generator) {
     std::vector<Point> generatorPoints = generator->createPoints(poly, this->points);
-    //Check if points are inside the polygon, or they can not be used for refinement
-    this->refiner->refine(poly, generatorPoints);
+    Region r(poly, this->points.getList());
+    r.addSeedPoints(generatorPoints);
+
+    this->refiner->refine(poly, r.getSeedPoints());
 }
 
 ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
