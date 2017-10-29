@@ -32,7 +32,8 @@ struct config_info{
 };
 
 namespace Configurations{
-   enum class config {ForceTriangulation, TriangulationWithPolygons, PolygonalDefault, PolygonalTriangulateRefine, PolygonalBreakAddPoints};
+   enum class config {ForceTriangulation, TriangulationWithPolygons, PolygonalDefault, PolygonalTriangulateRefine,
+       PolygonalBreakAddPoints, PolygonalEndWithTriangles};
 
     static std::map<Configurations::config,config_info> configurations = {
             {Configurations::config::ForceTriangulation, config_info(
@@ -49,6 +50,9 @@ namespace Configurations{
                     new VertexIndexMerger, new TriangulateRefiner)},
             {Configurations::config::PolygonalBreakAddPoints, config_info(
                     new IdentityReconstructor, new StraightLineClosingRule,
+                    new VertexIndexMerger, new VoronoiRefiner)},
+            {Configurations::config::PolygonalEndWithTriangles, config_info(
+                    new IdentityReconstructor, new TriangulateClosingRule,
                     new VertexIndexMerger, new VoronoiRefiner)}
     };
 };

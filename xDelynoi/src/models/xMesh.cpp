@@ -230,7 +230,15 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
         if(initialContainer.inVertex){
             vertexIndex = utilities::indexOf(points.getList(), segments[i].getFirst());
             int nextPolygon = getNeighbourFromCommonVertexSet(segments[i], initialContainer.containers, vertexIndex);
-            initialPolygon = nextPolygon;
+            if(!initialContainer.isInBoundary){
+                for (int i: initialContainer.containers) {
+                    if (i != nextPolygon) {
+                        initialPolygon = i;
+                    }
+                }
+            }else{
+                initialPolygon = nextPolygon;
+            }
         }
 
         n1 = getNeighbour(initialPolygon, segments[i], previous);
@@ -273,6 +281,12 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
                 if (poly1.inEdges(points.getList(), segments[i].getSecond())) {
                     if (!oneLastIteration) {
                         oneLastIteration = true;
+                    }else{
+                        lastPolygon = n1.neighbour;
+                        lastFinal = n1.neighbour;
+                        n1.neighbour = init;
+                        lastInfo = n1;
+                        break;
                     }
                 } else {
                     if (!atLeastOne) {
@@ -341,10 +355,9 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
 
             // Iterate
             if(oneLastIteration){
-                lastPolygon = n1.neighbour;
-                lastFinal = n1.neighbour;
-                n1.neighbour = init;
-                lastInfo = n1;
+                lastPolygon = n2.neighbour;
+                lastFinal = n2.neighbour;
+                lastInfo = n2;
                 break;
             }
 
@@ -545,8 +558,7 @@ NeighbourInfo xMesh::getNeighbour(int poly_index, PointSegment direction, std::v
                 nextPoly.getAdjacentEdges(vertexIndex, candidates_seg);
 
                 for (IndexSegment c: candidates_seg){
-                    if(c.isContained(direction, this->points.getList()) ||
-                       c.contains(this->points.getList(), direction.getSecond())){
+                    if(c.isContained(direction, this->points.getList())){
                         NeighbourInfo info(n, c, p, true);
                         info.isVertex = true;
 
@@ -703,7 +715,6 @@ ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
                 inBoundary = true;
             }
 
-            pointMap->printInFile("point_map.txt");
             NeighboursByPoint n = pointMap->get(point);
             ContainerInfo info(point, n.getNeighbours());
             info.setAsBoundary(inBoundary);
