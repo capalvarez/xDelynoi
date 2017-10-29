@@ -360,6 +360,7 @@ void xMesh::breakMesh(std::vector<PointSegment> segments) {
         }
     }
 
+    this->printInFile("beforeFixing.txt");
     xMeshElements* elements = this->getElements();
 
     closingRule->closePolygon(elements, segments[0].getFirst(), start, initialInfo, startFromBoundary);
@@ -702,6 +703,7 @@ ContainerInfo xMesh::processContainerInfo(int poly, Point point) {
                 inBoundary = true;
             }
 
+            pointMap->printInFile("point_map.txt");
             NeighboursByPoint n = pointMap->get(point);
             ContainerInfo info(point, n.getNeighbours());
             info.setAsBoundary(inBoundary);
