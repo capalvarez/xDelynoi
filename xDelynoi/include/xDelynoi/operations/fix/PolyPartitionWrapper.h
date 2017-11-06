@@ -9,9 +9,9 @@
 
 class PolyPartitionWrapper : public Partitioner{
 private:
-    xMesh* mesh;
+    xMeshElements* mesh;
 public:
-    PolyPartitionWrapper(xMesh* mesh);
+    PolyPartitionWrapper(xMeshElements* mesh);
 
     SimpleMesh partition(xPolygon elem);
 };

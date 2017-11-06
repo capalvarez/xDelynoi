@@ -1,6 +1,6 @@
 #include <xDelynoi/operations/fix/PolyPartitionWrapper.h>
 
-PolyPartitionWrapper::PolyPartitionWrapper(xMesh *mesh) {
+PolyPartitionWrapper::PolyPartitionWrapper(xMeshElements* mesh) {
     this->mesh = mesh;
 }
 
@@ -10,7 +10,7 @@ SimpleMesh PolyPartitionWrapper::partition(xPolygon elem) {
 
     TPPLPoly poly;
 
-    std::vector<Point> points = elem.getPoints(mesh->getPoints().getList());
+    std::vector<Point> points = elem.getPoints(mesh->points->getList());
 
     poly.Init(elem.numberOfSides());
 

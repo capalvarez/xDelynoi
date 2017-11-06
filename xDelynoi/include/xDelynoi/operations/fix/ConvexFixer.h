@@ -8,14 +8,15 @@
 class ConvexFixer: public MeshFixer {
 private:
     Partitioner* partitioner;
-    xMesh* mesh;
 
     void fixNonConvex(xPolygon elem);
 public:
-    ConvexFixer(xMesh *mesh);
+    ConvexFixer();
     ~ConvexFixer();
     void fixMesh();
     void fixElement(xPolygon elem);
+    void setMesh(xMeshElements*& mesh);
+    virtual MeshOperator* clone();
 };
 
 #endif

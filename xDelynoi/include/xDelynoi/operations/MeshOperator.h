@@ -8,7 +8,7 @@ protected:
     xMeshElements* mesh;
 public:
     MeshOperator();
-    void setMesh(xMeshElements*& mesh);
+    virtual void setMesh(xMeshElements*& mesh);
     virtual MeshOperator* clone()=0;
 };
 

@@ -1,21 +1,18 @@
 #include <xDelynoi/operations/fix/ConvexFixer.h>
 #include <xDelynoi/operations/fix/PolyPartitionWrapper.h>
 
-ConvexFixer::ConvexFixer(xMesh *mesh) {
-    this->partitioner = new PolyPartitionWrapper(mesh);
-    this->mesh = mesh;
-}
+ConvexFixer::ConvexFixer() {}
 
 ConvexFixer::~ConvexFixer() {
     delete partitioner;
 }
 
 void ConvexFixer::fixMesh() {
-    std::vector<xPolygon>& elements = mesh->getPolygons();
-    UniqueList<Point>& points = mesh->getPoints();
+    std::vector<xPolygon>* elements = mesh->polygons;
+    UniqueList<Point>* points = mesh->points;
 
-    for(xPolygon e : elements){
-        if(e.isConvex(points.getList())){
+    for(xPolygon e : *elements){
+        if(e.isConvex(points->getList())){
             continue;
         }
 
@@ -24,19 +21,28 @@ void ConvexFixer::fixMesh() {
 }
 
 void ConvexFixer::fixElement(xPolygon elem) {
-    UniqueList<Point>& points = mesh->getPoints();
+    UniqueList<Point>* points = mesh->points;
 
-    if(elem.isConvex(points.getList())){
+    if(elem.isConvex(points->getList())){
         fixNonConvex(elem);
     }
 }
 
 void ConvexFixer::fixNonConvex(xPolygon elem) {
-    int elemIndex = utilities::indexOf(this->mesh->getPolygons(), elem);
-    UniqueList<Point> &points = mesh->getPoints();
+    int elemIndex = utilities::indexOf(*this->mesh->polygons, elem);
+    UniqueList<Point>* points = mesh->points;
 
     SimpleMesh simpleMesh = partitioner->partition(elem);
 
-    std::unordered_map<int,int> pointMap = AddElementsAdapter::includeNewPoints(points, simpleMesh.getPoints());
-    AddElementsAdapter::includeNewElements(this->mesh->getElements(), simpleMesh, pointMap, elemIndex);
+    std::unordered_map<int,int> pointMap = AddElementsAdapter::includeNewPoints(*points, simpleMesh.getPoints());
+    AddElementsAdapter::includeNewElements(this->mesh, simpleMesh, pointMap, elemIndex);
+}
+
+MeshOperator *ConvexFixer::clone() {
+    return new ConvexFixer;
+}
+
+void ConvexFixer::setMesh(xMeshElements *&mesh) {
+    MeshOperator::setMesh(mesh);
+    this->partitioner = new PolyPartitionWrapper(mesh);
 }

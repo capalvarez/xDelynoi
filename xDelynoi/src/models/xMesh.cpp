@@ -483,6 +483,7 @@ void xMesh::mergeElements(std::vector<int> elements) {
 }
 
 void xMesh::fix(MeshFixer *fixer) {
+    fixer->setMesh(this->elements);
     fixer->fixMesh();
 }
 

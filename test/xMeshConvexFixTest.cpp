@@ -22,7 +22,7 @@ int main(){
     xMesh destructable(m, Config(Configurations::config::PolygonalDefault));
     destructable.printInFile("destructible.txt");
 
-    MeshFixer* convexFixer = new ConvexFixer(&destructable);
+    MeshFixer* convexFixer = new ConvexFixer();
     destructable.fix(convexFixer);
 
     destructable.printInFile("convex.txt");

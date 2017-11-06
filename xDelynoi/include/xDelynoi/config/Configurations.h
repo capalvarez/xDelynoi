@@ -32,9 +32,8 @@ struct config_info{
 };
 
 namespace Configurations{
-   enum class config {ForceTriangulation, TriangulationWithPolygons, PolygonalDefault, PolygonalTriangulateRefine,
+    enum class config {ForceTriangulation, TriangulationWithPolygons, PolygonalDefault, PolygonalTriangulateRefine,
        PolygonalBreakAddPoints, PolygonalEndWithTriangles};
-
     static std::map<Configurations::config,config_info> configurations = {
             {Configurations::config::ForceTriangulation, config_info(
                     new PolygonToTriangleReconstructor, new TriangulateClosingRule,
