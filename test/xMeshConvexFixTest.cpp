@@ -14,7 +14,7 @@ int main(){
                                          Point(0.4,8.8), Point(0.3,6.8), Point(0.4,4), Point(0.8,2.1), Point(1.3,0.4)};
     Region unicorn(unicorn_points);
 
-    unicorn.generateSeedPoints(PointGenerator(functions::random_double(0,15), functions::random_double(0,15)), 5, 5);
+    unicorn.generateSeedPoints(PointGenerator(functions::random_double(0,15), functions::random_double(0,15)), 10, 10);
     std::vector<Point> seeds = unicorn.getSeedPoints();
     TriangleVoronoiGenerator g(seeds, unicorn);
     Mesh<Polygon> m = g.getMesh();

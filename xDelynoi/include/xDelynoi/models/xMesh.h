@@ -11,6 +11,7 @@
 #include <xDelynoi/models/creator/PointCreator.h>
 #include "xPolygon.h"
 #include <xDelynoi/utilities/vector_ops.h>
+#include <xDelynoi/operations/break/reconstructors/ElementReconstructor.h>
 
 class MeshFixer;
 
@@ -50,7 +51,8 @@ public:
 
     NeighbourInfo getNeighbour(int poly_index, PointSegment direction);
     NeighbourInfo getNeighbour(int poly_index, PointSegment direction, std::vector<int> &previous);
-    int getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<int> vertexSet, int vertexIndex);
+    int
+    getNeighbourFromCommonVertexSet(PointSegment direction, std::vector<int> vertexSet, int vertexIndex);
 
     std::vector<int> getNeighboursByPoint(int poly_index);
     std::vector<int> getNeighboursBySegment(int poly_index);

@@ -78,8 +78,6 @@ namespace break_functions{
         n1.orderCCW(points->getList(), poly1.getCentroid());
         n2.orderCCW(points->getList(), poly1.getCentroid());
 
-
-
         int indexOfStart, point;
 
         if (delynoi_utilities::orientation(points->operator[](p1), points->operator[](p2), points->operator[](n2.edge.getFirst())) > 0) {
